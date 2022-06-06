@@ -6,10 +6,28 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+UENUM()
+enum class Gender : uint8
+{
+	Male,
+	Female,
+	NonBinary,
+	Agender,
+	GenderQueer,
+	Androgynous,
+	Transgender
+};
+
 UCLASS()
 class PROJECTROGUE2_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	Gender Gender;
 
 public:
 	// Sets default values for this character's properties
