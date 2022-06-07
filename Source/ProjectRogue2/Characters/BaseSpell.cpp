@@ -32,11 +32,11 @@ void ABaseSpell::CastSpell(ABaseCharacter* pCaster, ABaseCharacter* pTarget)
     Caster = pCaster;
     if (Damage > 0)
     {
-        OnSpellCasted(pTarget, GetDamage());
+        OnSpellCasted(pTarget);
     }
     else if (Healing > 0)
     {
-        OnHealCasted(GetHealing());
+        OnHealCasted();
     }
 }
 

@@ -44,9 +44,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Spell")
-	void OnSpellCasted(ABaseCharacter* pTarget, int SpellDamage);
+	void OnSpellCasted(ABaseCharacter* pTarget);
 	UFUNCTION(BlueprintImplementableEvent, Category = "Spell")
-	void OnHealCasted(int SpellHealing);
+	void OnHealCasted();
 
 	void CastSpell(ABaseCharacter* pCaster, ABaseCharacter* pTarget);
 
