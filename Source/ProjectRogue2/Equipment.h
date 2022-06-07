@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h
+#include "Components/ActorComponent.h"
 #include "Equipment.generated.h"
 
 class AItem;
@@ -45,7 +45,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	AItem* GetSlot(EEquipmentSlot Slot) { return EquippedItems[(int)Slot]}
+	AItem* GetSlot(EEquipmentSlot Slot) { return EquippedItems[(int)Slot]; }
 
 	UFUNCTION(BlueprintCallable)
 	bool TryEquip(EEquipmentSlot Slot, AItem* Item);

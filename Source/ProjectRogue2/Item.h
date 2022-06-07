@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "BaseCharacter.h"
+#include "Characters/BaseCharacter.h"
+#include "Components/CharacterStats.h"
 #include "Equipment.h"
 #include "Item.generated.h"
 
@@ -22,9 +23,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 LevelRequirement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 LevelRequirement;
@@ -62,12 +60,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EEquipmentSlot GetEquipSlot() { return EquipSlot; }
 
-	UFUNCTION(BlueprintImplementable)
-	virtual void OnUse(ABaseCharacter* Character) {}
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUse(ABaseCharacter* Character);
 
-	UFUNCTION(BlueprintImplementable)
-	virtual void OnEquip(ABaseCharacter* Character) {}
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnEquip(ABaseCharacter* Character);
 
-	UFUNCTION(BlueprintImplementable)
-	virtual void OnUnequip(ABaseCharacter* Character) {}
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUnequip(ABaseCharacter* Character);
 };
