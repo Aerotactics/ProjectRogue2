@@ -2,7 +2,7 @@
 
 
 #include "GridMovement.h"
-#include "../BaseCharacter.h"
+#include "../Characters/BaseCharacter.h"
 
 // Sets default values for this component's properties
 UGridMovement::UGridMovement()
