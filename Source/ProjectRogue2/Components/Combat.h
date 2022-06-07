@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Combat.generated.h"
 
+class ABaseCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTROGUE2_API UCombat : public UActorComponent
@@ -13,6 +14,7 @@ class PROJECTROGUE2_API UCombat : public UActorComponent
 	GENERATED_BODY()
 
 private:
+	ABaseCharacter* Owner;
 	int CurrentHealth;
 	int MaxHealth;
 	int CurrentMana;
@@ -32,6 +34,7 @@ public:
 
 	void TakeDamage(int Amount);
 	void Heal(int Amount);
+	void Attack(ABaseCharacter* Target);
 
 	int GetCurrentHealth() const { return CurrentHealth; }
 	int GetMaxHealth() const { return MaxHealth; }

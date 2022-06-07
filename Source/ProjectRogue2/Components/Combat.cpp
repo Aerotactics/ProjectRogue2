@@ -2,6 +2,8 @@
 
 
 #include "Combat.h"
+#include "CharacterStats.h"
+#include "../Characters/BaseCharacter.h"
 
 // Sets default values for this component's properties
 UCombat::UCombat()
@@ -20,7 +22,7 @@ void UCombat::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	Owner = Cast<ABaseCharacter>(GetOwner());
 }
 
 
@@ -34,7 +36,12 @@ void UCombat::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 
 void UCombat::TakeDamage(int Amount)
 {
-	CurrentHealth -= Amount;
+	//get armor
+	//UActorComponent* pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
+	//UEquipment* pEquipment = Cast<UEquipment>(pComponent); 
+	int Armor = 0; //pEquipment->GetTotalArmor();
+
+	CurrentHealth -= (Amount - Armor);
 	if (CurrentHealth < 0)
 	{
 		CurrentHealth = 0;
@@ -48,4 +55,27 @@ void UCombat::Heal(int Amount)
 	{
 		CurrentHealth = MaxHealth;
 	}
+}
+
+void UCombat::Attack(ABaseCharacter* Target)
+{
+	UActorComponent* pComponent = nullptr;
+	//get weapon
+	//pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
+	//get strength
+	pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
+	UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
+	int Damage = 0;
+	//if weapon.stat == Strength
+	{
+		Damage += pStats->GetValue(EStats::Strength);
+	}
+	//else if weapon.stat == Dexterity
+	{
+		//Damage += pStats->GetValue(EStats::Dexterity);
+	}
+
+	pComponent = Target->GetComponentByClass(UCombat::StaticClass());
+	UCombat* pCombat = Cast<UCombat>(pComponent);
+	pCombat->TakeDamage(Damage);
 }
