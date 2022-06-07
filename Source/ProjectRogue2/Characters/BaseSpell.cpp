@@ -2,6 +2,8 @@
 
 
 #include "BaseSpell.h"
+#include "BaseCharacter.h"
+#include "../Components/CharacterStats.h"
 
 // Sets default values
 ABaseSpell::ABaseSpell()
@@ -25,3 +27,37 @@ void ABaseSpell::Tick(float DeltaTime)
 
 }
 
+void ABaseSpell::CastSpell(ABaseCharacter* pCaster, ABaseCharacter* pTarget)
+{
+    Caster = pCaster;
+    if (Damage > 0)
+    {
+        OnSpellCasted(pTarget, GetDamage());
+    }
+    else if (Healing > 0)
+    {
+        OnHealCasted(GetHealing());
+    }
+}
+
+int ABaseSpell::GetDamage() const
+{
+    return Damage + GetIntelligence();
+}
+
+int ABaseSpell::GetHealing() const
+{
+    return Healing + GetIntelligence();
+}
+
+int ABaseSpell::GetIntelligence() const
+{
+    UActorComponent* pComponent = Caster->GetComponentByClass(UCharacterStats::StaticClass());
+    if (!pComponent)
+    {
+        return false;
+    }
+    UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
+    const Stat& intelligence = pStats->GetStat(EStats::Intelligence);
+    return intelligence.Value;
+}

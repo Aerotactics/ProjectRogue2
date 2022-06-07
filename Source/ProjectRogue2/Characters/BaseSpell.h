@@ -14,10 +14,14 @@ class PROJECTROGUE2_API ABaseSpell : public AActor
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spell")
+	ABaseCharacter* Caster;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
 	FString Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
 	int Damage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
+	int Healing;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
 	int Cost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
@@ -40,13 +44,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Spell")
-	void CastSpell(ABaseCharacter* pTarget);
+	void OnSpellCasted(ABaseCharacter* pTarget, int SpellDamage);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Spell")
+	void OnHealCasted(int SpellHealing);
+
+	void CastSpell(ABaseCharacter* pCaster, ABaseCharacter* pTarget);
 
 	const FString& GetSpellName() const { return Name; }
-	int GetDamage() const { return Damage; }
 	int GetManaCost() const { return Cost; }
 	int GetCooldown() const { return Cooldown; }
 	int GetRange() const { return Range; }
 	int GetIntelligenceRequirement() const { return IntelligenceRequirement; }
+	int GetDamage() const;
+	int GetHealing() const;
 
+private:
+	int GetIntelligence() const;
 };
