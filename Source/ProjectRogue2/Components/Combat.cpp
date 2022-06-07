@@ -25,21 +25,21 @@ void UCombat::BeginPlay()
 	Owner = Cast<ABaseCharacter>(GetOwner());
 }
 
-
-// Called every frame
-void UCombat::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 void UCombat::TakeDamage(int Amount)
 {
 	//get armor
 	//UActorComponent* pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
 	//UEquipment* pEquipment = Cast<UEquipment>(pComponent); 
 	int Armor = 0; //pEquipment->GetTotalArmor();
+
+	//goes in UEquipment::GetTotalArmor
+	//for (int32 i = 0; i < (int)EEquipmentSlot::Count; ++i)
+	//{
+	// if (AItem* pItem = EquippedItems[(EEquipmentSlot)i])
+	// {
+	//  Armor += pItem->GetArmor();
+	// }
+	//}
 
 	CurrentHealth -= (Amount - Armor);
 	if (CurrentHealth < 0)
@@ -60,22 +60,39 @@ void UCombat::Heal(int Amount)
 void UCombat::Attack(ABaseCharacter* Target)
 {
 	UActorComponent* pComponent = nullptr;
-	//get weapon
+	int Damage = 0;
 	//pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
-	//get strength
+	//check(pComponent);
+	//UEquipment* pEquipment = Cast<UEquipment>(pComponent);
+	//check(pEquipment);
+	//AItem* pLeftHand = pEquipment->GetSlot(EEquipmentSlot::LeftHand);
+	//AItem* pRightHand = pEquipment->GetSlot(EEquipmentSlot::RightHand);
 	pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
 	UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
-	int Damage = 0;
-	//if weapon.stat == Strength
-	{
-		Damage += pStats->GetValue(EStats::Strength);
-	}
-	//else if weapon.stat == Dexterity
-	{
-		//Damage += pStats->GetValue(EStats::Dexterity);
-	}
+	//if (pLeftHand)
+	//{
+	//Damage += pLeftHand->GetDamage() + pStats->GetValue(pLeftHand->GetStatType());
+	//}
+	//if (pRightHand)
+	//{
+	//Damage += pRightHand->GetDamage() + pStats->GetValue(pRightHand->GetStatType());
+	//
+	//} 
 
 	pComponent = Target->GetComponentByClass(UCombat::StaticClass());
 	UCombat* pCombat = Cast<UCombat>(pComponent);
 	pCombat->TakeDamage(Damage);
+}
+
+int UCombat::GetStatModifier(/*AItem* pItem*/)
+{
+	//EStats StatType = pItem->GetStatType();
+	//return pStats->GetValue(EStats::Strength);
+	//if(StatType == EStats::Strength)
+	//{
+	//}
+	//else if (StatType == EStats::Dexterity)
+	//{
+	//return pStats->GetValue(EStats::Dexterity)
+	//}
 }

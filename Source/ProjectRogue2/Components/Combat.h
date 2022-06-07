@@ -29,9 +29,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	void TakeDamage(int Amount);
 	void Heal(int Amount);
 	void Attack(ABaseCharacter* Target);
@@ -42,4 +39,7 @@ public:
 	int GetMaxMana() const { return MaxMana; }
 
 	bool IsDead() const { return CurrentHealth == 0; }
+
+private:
+	int GetStatModifier(/*AItem* pItem*/);
 };
