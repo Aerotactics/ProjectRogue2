@@ -46,9 +46,11 @@ void UCharacterStats::AllocatePoint(EStats StatToIncrease)
 {
     Stat& stat = Stats[static_cast<size_t>(StatToIncrease)];
     ++stat.Value;
+    --StatPointsAvailable;
     if (stat.Value > stat.Max)
     {
         stat.Value = stat.Max;
+        ++StatPointsAvailable;
     }
 }
 

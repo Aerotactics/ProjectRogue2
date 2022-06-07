@@ -50,7 +50,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     void UpdateStats(const int* StartingValues, const int Min, const int Max);
-    void AddPoints(const int Amount) { StatPointsAvailable += Amount; }
+    void AddStatPoints(const int Amount) { StatPointsAvailable += Amount; }
     void AllocatePoint(EStats StatToIncrease);
 
     void Increase(EStats StatToIncrease, const int Amount = 1);
