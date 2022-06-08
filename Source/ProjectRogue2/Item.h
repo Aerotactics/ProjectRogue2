@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Characters/BaseCharacter.h"
 #include "Components/CharacterStats.h"
-#include "Equipment.h"
+#include "Components/Equipment.h"
 #include "Item.generated.h"
 
 UCLASS()
@@ -40,6 +40,9 @@ protected:
 	int32 Durability;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Armor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxStackSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -57,15 +60,24 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	EEquipmentSlot GetEquipSlot() { return EquipSlot; }
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(ABaseCharacter* Character);
 
-	UFUNCTION(BlueprintImplementableEvent)
 	void OnEquip(ABaseCharacter* Character);
-
-	UFUNCTION(BlueprintImplementableEvent)
 	void OnUnequip(ABaseCharacter* Character);
+
+	const FString& GetCustomName() const { return CustomName; }
+	const FString& GetItemName() const { return ItemName; }
+	const FString& GetDescription() const { return Description; }
+	int32 GetLevelRequirement() const { return LevelRequirement; }
+	int32 GetStatLevelRequirement() const { return StatLevelRequirement; }
+	int32 GetDamage() const { return Damage; }
+	int32 GetDurabiliy() const { return Durability; }
+	int32 GetArmor() const { return Armor; }
+	int32 GetMaxStackSize() const { return MaxStackSize; }
+	EStats GetStatType() const { return StatType; }
+	EEquipmentSlot GetEquipSlot() const { return EquipSlot; }
 };

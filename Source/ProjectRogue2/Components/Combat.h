@@ -39,7 +39,4 @@ public:
 	int GetMaxMana() const { return MaxMana; }
 
 	bool IsDead() const { return CurrentHealth == 0; }
-
-private:
-	int GetStatModifier(/*AItem* pItem*/);
 };
