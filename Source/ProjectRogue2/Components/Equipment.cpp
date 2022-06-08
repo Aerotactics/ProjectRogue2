@@ -3,7 +3,7 @@
 
 #include "Equipment.h"
 #include "../Item.h"
-#include "Inventory.h"
+#include "Inventory/Inventory.h"
 #include "../Characters/BaseCharacter.h"
 
 // Sets default values for this component's properties
@@ -67,7 +67,7 @@ bool UEquipment::TryUnequip(EEquipmentSlot Slot, bool bIsSwap)
 	if (bIsSwap)
 	{
 		//add item to inventory
-		pInventory->AddItem(CurrentlyEquipped, 1);
+		pInventory->AddItem(CurrentlyEquipped->GetClass(), 1);
 		//remove item from equipped items
 		EquippedItems[static_cast<size_t>(Slot)] = nullptr;
 	}
@@ -78,7 +78,7 @@ bool UEquipment::TryUnequip(EEquipmentSlot Slot, bool bIsSwap)
 	}
 
 	// Try Add the item to inventory
-	pInventory->AddItem(CurrentlyEquipped, 1);
+	pInventory->AddItem(CurrentlyEquipped->GetClass(), 1);
 	return true;
 }
 
