@@ -7,6 +7,7 @@
 #include "Equipment.generated.h"
 
 class AItem;
+class ABaseCharacter;
 
 UENUM()
 enum class EEquipmentSlot : uint8
@@ -27,8 +28,11 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTROGUE2_API UEquipment : public UActorComponent
 {
 	GENERATED_BODY()
+
+private:
+	ABaseCharacter* Owner;
+
 protected:
-	
 	UPROPERTY()
 	AItem* EquippedItems[(int)EEquipmentSlot::Count];
 
@@ -41,9 +45,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	UFUNCTION(BlueprintCallable)
 	AItem* GetSlot(EEquipmentSlot Slot) { return EquippedItems[(int)Slot]; }
 
@@ -51,5 +52,7 @@ public:
 	bool TryEquip(EEquipmentSlot Slot, AItem* Item);
 
 	UFUNCTION(BlueprintCallable)
-	bool TryUnequip(EEquipmentSlot Slot);
+	bool TryUnequip(EEquipmentSlot Slot, bool bIsSwap = false);
+
+	int GetTotalArmor() const;
 };
