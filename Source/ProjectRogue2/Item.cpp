@@ -2,6 +2,8 @@
 
 
 #include "Item.h"
+#include "Characters/BaseCharacter.h"
+#include "Components/Equipment.h"
 
 // Sets default values
 AItem::AItem()
@@ -25,3 +27,16 @@ void AItem::Tick(float DeltaTime)
 
 }
 
+void AItem::OnEquip(ABaseCharacter* Character)
+{
+	UActorComponent* pComponent = Character->GetComponentByClass(UEquipment::StaticClass());
+	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
+	pEquipment->TryEquip(EquipSlot, this);
+}
+
+void AItem::OnUnequip(ABaseCharacter* Character)
+{
+	UActorComponent* pComponent = Character->GetComponentByClass(UEquipment::StaticClass());
+	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
+	pEquipment->TryUnequip(EquipSlot);
+}
