@@ -54,3 +54,12 @@ void UCharacterClass::GainExperience(const int Amount)
 		}
 	}
 }
+
+void UCharacterClass::LoseExperience(const int Amount)
+{
+	Experience -= Amount;
+	if (Experience < 0)
+	{
+		Experience = 0;
+	}
+}

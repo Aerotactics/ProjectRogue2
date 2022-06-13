@@ -23,6 +23,23 @@ void UInventory::BeginPlay()
 	
 }
 
+bool UInventory::DecreaseGold(const int32 Amount)
+{
+    if ((Gold - Amount) < 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Cannot remove %d gold, only have %d"), Amount, Gold);
+        return false;
+    }
+
+    Gold -= Amount;
+    if (Gold < 0)
+    {
+        Gold = 0;
+    }
+
+    return true;
+}
+
 void UInventory::IncreaseInventorySize(const int32 Amount)
 {
     Slots.Reserve(Slots.Num() + Amount);
@@ -96,6 +113,9 @@ bool UInventory::IsInventoryFull() const
     return true;
 }
 
+////////////////////////////////////////////////////////////////////////////
+// Private Functions
+////////////////////////////////////////////////////////////////////////////
 
 int32_t UInventory::FillExistingStacks(TSubclassOf<AItem> pClass, int32 Amount)
 {

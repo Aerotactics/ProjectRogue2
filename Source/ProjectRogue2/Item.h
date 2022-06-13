@@ -43,6 +43,9 @@ protected:
 	int32 Armor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Range;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxStackSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -77,6 +80,7 @@ public:
 	int32 GetDamage() const { return Damage; }
 	int32 GetDurabiliy() const { return Durability; }
 	int32 GetArmor() const { return Armor; }
+	int32 GetRange() const { return Range; }
 	int32 GetMaxStackSize() const { return MaxStackSize; }
 	EStats GetStatType() const { return StatType; }
 	EEquipmentSlot GetEquipSlot() const { return EquipSlot; }

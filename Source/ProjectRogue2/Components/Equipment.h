@@ -34,7 +34,7 @@ private:
 
 protected:
 	UPROPERTY()
-	AItem* EquippedItems[(int)EEquipmentSlot::Count];
+	AItem* EquippedItems[static_cast<int>(EEquipmentSlot::Count)];
 
 public:	
 	// Sets default values for this component's properties
@@ -46,7 +46,7 @@ protected:
 
 public:	
 	UFUNCTION(BlueprintCallable)
-	AItem* GetSlot(EEquipmentSlot Slot) { return EquippedItems[(int)Slot]; }
+	AItem* GetSlot(EEquipmentSlot Slot) { return EquippedItems[static_cast<int>(Slot)]; }
 
 	UFUNCTION(BlueprintCallable)
 	bool TryEquip(EEquipmentSlot Slot, AItem* Item);
@@ -54,5 +54,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool TryUnequip(EEquipmentSlot Slot, bool bIsSwap = false);
 
+	int GetRange() const;
+	int GetWeaponDamage() const;
 	int GetTotalArmor() const;
 };

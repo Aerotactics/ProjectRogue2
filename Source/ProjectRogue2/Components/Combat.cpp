@@ -3,6 +3,7 @@
 
 #include "Combat.h"
 #include "../Characters/BaseCharacter.h"
+#include "../Characters/BaseSpell.h"
 #include "../Item.h"
 #include "CharacterStats.h"
 #include "Equipment.h"
@@ -25,6 +26,53 @@ void UCombat::BeginPlay()
 
 	// ...
 	Owner = Cast<ABaseCharacter>(GetOwner());
+}
+
+void UCombat::Attack()
+{
+	UActorComponent* pComponent = nullptr;
+	pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
+	check(pComponent);
+	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
+	check(pEquipment);
+	int Damage = pEquipment->GetWeaponDamage();
+	int Range = pEquipment->GetRange();
+	pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
+	check(pComponent);
+	UCharacterStats* pStat = Cast<UCharacterStats>(pComponent);
+	check(pStat);
+
+	if (Range == MeleeRange)
+	{
+		Damage += pStat->GetValue(EStats::Strength);
+	}
+	else
+	{
+		Damage += pStat->GetValue(EStats::Dexterity);
+	}
+
+	//FHitResult HitResult;
+	//FVector Start = Owner->GetActorLocation();
+	//FVector End = Start + (Owner->GetActorForwardVector() * Range);
+	//FCollisionObjectQueryParams ObjectParams;
+	//FCollisionQueryParams QueryParams;
+	//QueryParams.AddIgnoredActor(Owner);
+	//Owner->GetWorld()->LineTraceSingleByObjectType(HitResult, Start, End, ObjectParams, QueryParams);
+
+	if (ABaseCharacter* pTarget = Cast<ABaseCharacter>(Target))
+	{
+		pComponent = pTarget->GetComponentByClass(UCombat::StaticClass());
+		UCombat* pCombat = Cast<UCombat>(pComponent);
+		if (pCombat)
+		{
+			pCombat->TakeDamage(Damage);
+		}
+	}
+}
+
+void UCombat::CastSpell(ABaseSpell* Spell)
+{
+	Spell->CastSpell(Owner, Target);
 }
 
 void UCombat::TakeDamage(int Amount)
@@ -58,28 +106,20 @@ void UCombat::Heal(int Amount)
 	}
 }
 
-void UCombat::Attack(ABaseCharacter* Target)
+void UCombat::RestoreMana(int Amount)
 {
-	UActorComponent* pComponent = nullptr;
-	int Damage = 0;
-	pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
-	check(pComponent);
-	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
-	check(pEquipment);
-	AItem* pLeftHand = pEquipment->GetSlot(EEquipmentSlot::LeftHand);
-	AItem* pRightHand = pEquipment->GetSlot(EEquipmentSlot::RightHand);
-	pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
-	UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
-	if (pLeftHand)
+	CurrentMana += Amount;
+	if (CurrentMana > MaxMana)
 	{
-		Damage += pLeftHand->GetDamage() + pStats->GetValue(pLeftHand->GetStatType());
+		CurrentMana = MaxMana;
 	}
-	if (pRightHand)
-	{
-		Damage += pRightHand->GetDamage() + pStats->GetValue(pRightHand->GetStatType());
-	} 
+}
 
-	pComponent = Target->GetComponentByClass(UCombat::StaticClass());
-	UCombat* pCombat = Cast<UCombat>(pComponent);
-	pCombat->TakeDamage(Damage);
+void UCombat::ReduceMana(int Amount)
+{
+	CurrentMana -= Amount;
+	if (CurrentMana < 0)
+	{
+		CurrentMana = 0;
+	}
 }

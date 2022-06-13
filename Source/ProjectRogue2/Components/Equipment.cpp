@@ -82,6 +82,41 @@ bool UEquipment::TryUnequip(EEquipmentSlot Slot, bool bIsSwap)
 	return true;
 }
 
+int UEquipment::GetRange() const
+{
+	AItem* pLeftHand = EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)];
+	AItem* pRightHand = EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)];
+
+	int Range = 0;
+	if (pLeftHand)
+	{
+		pLeftHand->GetRange();
+	}
+	if (int RightRange = pRightHand->GetRange() > Range)
+	{
+		Range = RightRange;
+	}
+
+	return Range;
+}
+
+int UEquipment::GetWeaponDamage() const
+{
+	int Damage = 0;
+	AItem* pLeftHand = EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)];
+	AItem* pRightHand = EquippedItems[static_cast<int>(EEquipmentSlot::RightHand)];
+	if (pLeftHand)
+	{
+		Damage += pLeftHand->GetDamage();
+	}
+	if (pRightHand)
+	{
+		Damage += pRightHand->GetDamage();
+	}
+
+	return Damage;
+}
+
 int UEquipment::GetTotalArmor() const
 {
 	int Armor = 0;
