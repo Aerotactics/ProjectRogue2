@@ -19,6 +19,7 @@ class PROJECTROGUE2_API UInventory : public UActorComponent
 
 private:
 	TArray<FInventorySlot> Slots;
+	int32 Gold;
 
 public:	
 	// Sets default values for this component's properties
@@ -30,9 +31,20 @@ protected:
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void IncreaseGold(const int32 Amount) { Gold += Amount; }
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool DecreaseGold(const int32 Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	int32 GetGold() const { return Gold; }
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void IncreaseInventorySize(const int32 Amount);
+
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void DropItem(const int32 Index);
+
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool AddItem(TSubclassOf<AItem> Class, int32 Amount);
 

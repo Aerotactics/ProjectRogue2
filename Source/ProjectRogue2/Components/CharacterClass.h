@@ -31,7 +31,7 @@ private:
 	float RequiredExperienceMultiplier;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	int StatPointsPerLevel;
 
 public:	
@@ -46,13 +46,22 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterClass")
 	void GainExperience(const int Amount);
-	void IncreaseExperienceRequiredPerLevel(float Rate) { RequiredExperienceMultiplier += Rate; }
-	void SetRequiredExperienceMultiplier(float Rate) { RequiredExperienceMultiplier = Rate; }
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterClass")
+	void LoseExperience(const int Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterClass")
 	void SetLevel(int NewLevel) { Level = NewLevel; }
 
-	EClass GetCharacterClass() const { return CharacterClass; }
+	UFUNCTION(BlueprintCallable, Category = "CharacterClass")
 	int GetLevel() const { return Level; }
+
+	void IncreaseExperienceRequiredPerLevel(float Rate) { RequiredExperienceMultiplier += Rate; }
+	void SetRequiredExperienceMultiplier(float Rate) { RequiredExperienceMultiplier = Rate; }
+
+	EClass GetCharacterClass() const { return CharacterClass; }
 	int GetExperience() const { return Experience; }
 	int GetRequiredExperience() const { return RequiredExperience; }
 	int GetRequiredExperienceMultiplier() const { return RequiredExperienceMultiplier; }
