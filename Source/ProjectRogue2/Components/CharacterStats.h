@@ -21,6 +21,10 @@ enum class EStats : uint8
     MaxHealth,
     CurrentMana,
     MaxMana,
+    Level,
+    Experience,
+    RequiredExperience,
+    RequiredExperienceMultiplier,
     CarryCapacity,
 
     // BACKGROUND (Mostly hidden to player)
@@ -36,6 +40,7 @@ enum class EStats : uint8
     PoisonResistPercent,
     GoldFindPercent,
     MagicFindPercent,
+    ExperienceGainPercent,
 
     Count
 };
@@ -46,9 +51,12 @@ class PROJECTROGUE2_API UCharacterStats : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-    float Stats[(int)EStats::Count];
-    int StatPointsAvailable;
+protected:
+    UPROPERTY(EditAnywhere)
+    TMap<EStats, float> Stats;
+
+    UPROPERTY(EditAnywhere)
+    int32 StatPointsAvailable;
 
 public:	
 	// Sets default values for this component's properties
@@ -66,10 +74,13 @@ public:
     void UpdateCoreStats(const int* StartingValues);
     void AddCoreStatPoints(const int Amount) { StatPointsAvailable += Amount; }
     void AllocateCoreStatPoint(EStats StatToIncrease);
+    int32 GetAvailableStatPoints() const { return StatPointsAvailable; }
 
+    bool HasStat(EStats Stat) const { return Stats.Contains(Stat); }
+    float GetStat(EStats Stat) const;
+    void SetStat(EStats Stat, float Value) { Stats[Stat] = Value; }
+    
     void Increase(EStats StatToIncrease, float Amount = 1);
     void Decrease(EStats StatToIncrease, float Amount = 1);
 
-    int GetAvailableStatPoints() const { return StatPointsAvailable; }
-    float GetStat(EStats stat) const { return Stats[static_cast<size_t>(stat)]; }
 };
