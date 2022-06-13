@@ -5,6 +5,7 @@
 #include "../Item.h"
 #include "Inventory/Inventory.h"
 #include "../Characters/BaseCharacter.h"
+#include "../Components/CharacterClass.h"
 
 // Sets default values for this component's properties
 UEquipment::UEquipment()
@@ -28,14 +29,36 @@ void UEquipment::BeginPlay()
 
 bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 {
+	// Mismatched Slot
 	if (Slot != Item->GetEquipSlot())
 	{
 		//Log
 		return false;
 	}
 
-	UActorComponent* Component = Owner->GetComponentByClass(UEquipment::StaticClass());
-	UEquipment* Equipment = Cast<UEquipment>(Component);
+	// Level Requirement
+	int32 LevelRequirement = Item->GetLevelRequirement();
+	if (LevelRequirement > 0)
+	{
+		UCharacterClass* ClassComponent = Owner->GetComponent<UCharacterClass>();
+		if (ClassComponent != nullptr && ClassComponent->GetLevel() < LevelRequirement)
+		{
+			// Log
+			return false;
+		}
+	}
+
+	// Stat Level Requirement
+	int32 StatLevelRequirement = Item->GetStatLevelRequirement();
+	if (StatLevelRequirement > 0)
+	{
+		UCharacterStats* StatsComponent = Owner->GetComponent<UCharacterStats>();
+		if (StatsComponent != nullptr && StatsComponent->GetStat(Item->GetStatType()) < StatLevelRequirement)
+		{
+			// Log
+			return false;
+		}
+	}
 
 	if (!TryUnequip(Slot, true))
 	{

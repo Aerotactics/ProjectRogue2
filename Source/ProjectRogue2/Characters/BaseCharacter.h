@@ -46,4 +46,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	const FString& GetCharacterName() const { return Name; }
+
+	// https://stackoverflow.com/questions/122316/template-constraints-c
+	template<class Type>
+	Type* GetComponent() 
+	{
+		// This compile-time assert just makes sure Type is a
+		//	subclass of UClass.
+		static_assert(std::is_base_of_v<UClass, Type>());
+		UActorComponent* Component = Owner->GetComponentByClass(Type::StaticClass());
+		Type* TypeComponent = Cast<Type>(Component);
+		return TypeComponent;
+	}
 };
