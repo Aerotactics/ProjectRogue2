@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "CharacterStats.generated.h"
 
-UENUM()
+UENUM(Blueprintable)
 enum class EStats : uint8
 {
     // CORE STATS (Available to player)

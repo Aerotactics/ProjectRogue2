@@ -73,9 +73,17 @@ public:
 	void ReduceMaxMana(int Amount) { MaxMana -= Amount; }
 
 	ABaseCharacter* GetTarget() const { return Target; }
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	int GetCurrentHealth() const { return CurrentHealth; }
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	int GetMaxHealth() const { return MaxHealth; }
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	int GetCurrentMana() const { return CurrentMana; }
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	int GetMaxMana() const { return MaxMana; }
 
 	bool IsDead() const { return CurrentHealth == 0; }

@@ -29,7 +29,21 @@ void UEquipment::BeginPlay()
 
 bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 {
-	// Mismatched Slot
+	//weapons are typically equipped in the right hand
+	//so, if we are equipping in the right hand
+	if (Slot == EEquipmentSlot::RightHand)
+	{
+		AItem* CurrentlyEquipped = GetSlot(Slot);
+		//but we already have something in that hand
+		if (CurrentlyEquipped)
+		{
+			//put it in the other hand
+			EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)] = Item;
+			Item->OnEquip(Cast<ABaseCharacter>(Owner));
+			return true;
+		}
+	}
+
 	if (Slot != Item->GetEquipSlot())
 	{
 		//Log
@@ -66,7 +80,6 @@ bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 		return false;
 	}
 
-	// Remove this from inventory
 	EquippedItems[(int)Slot] = Item;
 	Item->OnEquip(Cast<ABaseCharacter>(Owner));
 	return true;
@@ -86,22 +99,16 @@ bool UEquipment::TryUnequip(EEquipmentSlot Slot, bool bIsSwap)
 	UActorComponent* pComponent = Owner->GetComponentByClass(UInventory::StaticClass());
 	UInventory* pInventory = Cast<UInventory>(pComponent);
 
-	//if we are swapping an equipped weapon with a weapon in the inventory
-	if (bIsSwap)
-	{
-		//add item to inventory
-		pInventory->AddItem(CurrentlyEquipped->GetClass(), 1);
-		//remove item from equipped items
-		EquippedItems[static_cast<size_t>(Slot)] = nullptr;
-	}
-
-	if (pInventory->IsInventoryFull())
+	//if we are swapping an equipped weapon with a weapon in the inventory, the inventory can be full
+	if (pInventory->IsInventoryFull() && !bIsSwap)
 	{
 		return false;
 	}
 
 	// Try Add the item to inventory
 	pInventory->AddItem(CurrentlyEquipped->GetClass(), 1);
+	//remove item from equipped items
+	EquippedItems[static_cast<size_t>(Slot)] = nullptr;
 	return true;
 }
 

@@ -91,6 +91,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
+	const TArray<FStatEffect>& GetStatEffects() const { return Effects; }
+
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	EEquipmentSlot GetEquipSlot() { return EquipSlot; }
 
 	UFUNCTION(BlueprintImplementableEvent)
