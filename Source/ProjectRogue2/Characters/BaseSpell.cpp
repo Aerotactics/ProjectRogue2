@@ -58,6 +58,6 @@ int ABaseSpell::GetIntelligence() const
         return false;
     }
     UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
-    const Stat& intelligence = pStats->GetStat(EStats::Intelligence);
-    return intelligence.Value;
+    const float intelligence = pStats->GetStat(EStats::Intelligence);
+    return static_cast<int>(intelligence);
 }

@@ -42,11 +42,11 @@ bool USpellbook::AddSpell(ABaseSpell* Spell)
         return false;
     }
     UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
-    const Stat& intelligence = pStats->GetStat(EStats::Intelligence);
+    const float intelligence = pStats->GetStat(EStats::Intelligence);
     const int Requirement = Spell->GetIntelligenceRequirement();
-    if (intelligence.Value < Requirement)
+    if (intelligence < Requirement)
     {
-        int Difference = Requirement - intelligence.Value;
+        int Difference = Requirement - intelligence;
         GEngine->AddOnScreenDebugMessage(-1, 12, FColor::Red, FString::Printf(TEXT("%s needs %d more intelligence to learn %s"), *Owner->GetCharacterName(), Difference, *Spell->GetSpellName()));
         return false;
     }

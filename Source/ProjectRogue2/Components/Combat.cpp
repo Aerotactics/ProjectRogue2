@@ -44,11 +44,11 @@ void UCombat::Attack()
 
 	if (Range == MeleeRange)
 	{
-		Damage += pStat->GetValue(EStats::Strength);
+		Damage += pStat->GetStat(EStats::Strength);
 	}
 	else
 	{
-		Damage += pStat->GetValue(EStats::Dexterity);
+		Damage += pStat->GetStat(EStats::Dexterity);
 	}
 
 	//FHitResult HitResult;
@@ -99,7 +99,7 @@ void UCombat::Heal(int Amount)
 {
 	UActorComponent* pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
 	UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
-	CurrentHealth += Amount + pStats->GetValue(EStats::Intelligence);
+	CurrentHealth += Amount + pStats->GetStat(EStats::Intelligence);
 	if (CurrentHealth > MaxHealth)
 	{
 		CurrentHealth = MaxHealth;

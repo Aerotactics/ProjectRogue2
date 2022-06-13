@@ -9,7 +9,7 @@
 class AItem;
 class ABaseCharacter;
 
-UENUM()
+UENUM(Blueprintable)
 enum class EEquipmentSlot : uint8
 {
 	None,

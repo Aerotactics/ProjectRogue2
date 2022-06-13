@@ -18,6 +18,7 @@ class PROJECTROGUE2_API UInventory : public UActorComponent
 	GENERATED_BODY()
 
 private:
+	ABaseCharacter* Owner;
 	TArray<FInventorySlot> Slots;
 	int32 Gold;
 
@@ -43,14 +44,33 @@ public:
 	void IncreaseInventorySize(const int32 Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void DropItem(const int32 Index);
+	void DropItem(const int32 Index, const int32 Amount = 1);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void DropStack(const int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void DeleteItem(const int32 Index, const int32 Amount = 1);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool AddItem(TSubclassOf<AItem> Class, int32 Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool UseItem(const int32 Index, int32 Amount = 1);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	int32 FindItemByClass(TSubclassOf<AItem> Class, bool Reverse = true) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void RemoveItemByClass(TSubclassOf<AItem> Class, int32 Amount, bool Reverse = true);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	const TArray<FInventorySlot>& GetSlots() const { return Slots; }
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	const FInventorySlot& GetSlot(const int32 Index) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool IsInventoryFull() const;
 
 private:
