@@ -9,20 +9,44 @@
 #include "Components/Equipment.h"
 #include "Item.generated.h"
 
+UENUM()
+enum class EItemRarity
+{
+	Normal,
+	Magic,
+	Relic,
+	Legendary
+};
+
+USTRUCT(Blueprintable)
+struct FStatEffect
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Stats")
+	EStats Stat;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Stats")
+	float Amount;
+};
+
 UCLASS()
 class PROJECTROGUE2_API AItem : public AActor
 {
 	GENERATED_BODY()
-protected:
 
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString CustomName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString ItemName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EItemRarity Rarity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 LevelRequirement;
@@ -50,6 +74,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEquipmentSlot EquipSlot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FStatEffect> Effects;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -69,12 +96,19 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(ABaseCharacter* Character);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnEquipped(ABaseCharacter* Character);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUnequipped(ABaseCharacter* Character);
+
 	void OnEquip(ABaseCharacter* Character);
 	void OnUnequip(ABaseCharacter* Character);
 
 	const FString& GetCustomName() const { return CustomName; }
 	const FString& GetItemName() const { return ItemName; }
 	const FString& GetDescription() const { return Description; }
+	EItemRarity GetRarity() const { return Rarity; }
 	int32 GetLevelRequirement() const { return LevelRequirement; }
 	int32 GetStatLevelRequirement() const { return StatLevelRequirement; }
 	int32 GetDamage() const { return Damage; }

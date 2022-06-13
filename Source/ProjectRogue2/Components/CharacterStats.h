@@ -9,32 +9,45 @@
 UENUM()
 enum class EStats : uint8
 {
+    // CORE STATS (Available to player)
     Strength,
     Dexterity,
     Intelligence,
     Vitality,
     Luck,
-    Health,
-    Mana,
+
+    // RESOURCES, SKILLS, MISC (Transparent to player)
+    CurrentHealth,
+    MaxHealth,
+    CurrentMana,
+    MaxMana,
+    CarryCapacity,
+
+    // BACKGROUND (Mostly hidden to player)
+    HitChancePercent,
+    DodgeChancePercent,
+    MeleeDamagePercent,
+    RangeDamagePercent,
+    HealthRegenerationPercent,
+    ManaRegenerationPercent,
+    SpellEffectPercent,
+    DamageResistPercent,
+    MagicResistPercent,
+    PoisonResistPercent,
+    GoldFindPercent,
+    MagicFindPercent,
+
+    Count
 };
-static constexpr size_t StatCount = static_cast<size_t>(EStats::Luck) + 1;
+static constexpr size_t CoreStatCount = 5;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTROGUE2_API UCharacterStats : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:
-    struct Stat
-    {
-        FString m_name;
-        int Value;
-        int Min;
-        int Max;
-    };
-
 private:
-    Stat Stats[StatCount];
+    float Stats[(int)EStats::Count];
     int StatPointsAvailable;
 
 public:	
@@ -49,23 +62,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    void UpdateStats(const int* StartingValues, const int Min, const int Max);
-    void AddStatPoints(const int Amount) { StatPointsAvailable += Amount; }
-    void AllocatePoint(EStats StatToIncrease);
+    // TODO: Revisit this during character creation
+    void UpdateCoreStats(const int* StartingValues);
+    void AddCoreStatPoints(const int Amount) { StatPointsAvailable += Amount; }
+    void AllocateCoreStatPoint(EStats StatToIncrease);
 
-    void Increase(EStats StatToIncrease, const int Amount = 1);
-    void Decrease(EStats StatToIncrease, const int Amount = 1);
-    void IncreaseMin(EStats stat, const int Amount = 1) { Stats[static_cast<size_t>(stat)].Min += Amount; }
-    void IncreaseMax(EStats stat, const int Amount = 1) { Stats[static_cast<size_t>(stat)].Max += Amount; }
-    void DecreaseMin(EStats stat, const int Amount = 1) { Stats[static_cast<size_t>(stat)].Min -= Amount; }
-    void DecreaseMax(EStats stat, const int Amount = 1) { Stats[static_cast<size_t>(stat)].Max -= Amount; }
+    void Increase(EStats StatToIncrease, float Amount = 1);
+    void Decrease(EStats StatToIncrease, float Amount = 1);
 
-    const Stat& GetStat(EStats stat) const { return Stats[static_cast<size_t>(stat)]; }
     int GetAvailableStatPoints() const { return StatPointsAvailable; }
-
-    int GetValue(EStats stat) const { return Stats[static_cast<size_t>(stat)].Value; }
-    int GetMin(EStats stat) const { return Stats[static_cast<size_t>(stat)].Min; }
-    int GetMax(EStats stat) const { return Stats[static_cast<size_t>(stat)].Max; }
-
+    float GetStat(EStats stat) const { return Stats[static_cast<size_t>(stat)]; }
 };
-using Stat = UCharacterStats::Stat;

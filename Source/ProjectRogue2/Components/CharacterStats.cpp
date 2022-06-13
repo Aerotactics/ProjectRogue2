@@ -32,50 +32,32 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	// ...
 }
 
-void UCharacterStats::UpdateStats(const int* StartingValues, const int Min, const int Max)
+void UCharacterStats::UpdateCoreStats(const int* StartingValues)
 {
-	for (size_t i = 0; i < StatCount; ++i)
+	for (size_t i = 0; i < CoreStatCount; ++i)
 	{
-		Stats[i].Value = StartingValues[i];
-		Stats[i].Min = Min;
-		Stats[i].Max = Max;
+		Stats[i] = StartingValues[i];
 	}
 }
 
-void UCharacterStats::AllocatePoint(EStats StatToIncrease)
+void UCharacterStats::AllocateCoreStatPoint(EStats StatToIncrease)
 {
-    Stat& stat = Stats[static_cast<size_t>(StatToIncrease)];
-    ++stat.Value;
+    if ((int)StatToIncrease >= CoreStatCount)
+    {
+        //Log
+        return;
+    }
+
+    ++Stats[static_cast<size_t>(StatToIncrease)];
     --StatPointsAvailable;
-    if (stat.Value > stat.Max)
-    {
-        stat.Value = stat.Max;
-        ++StatPointsAvailable;
-    }
 }
 
-void UCharacterStats::Increase(EStats StatToIncrease, const int Amount)
+void UCharacterStats::Increase(EStats StatToIncrease, float Amount)
 {
-    Stat& stat = Stats[static_cast<size_t>(StatToIncrease)];
-    if (stat.Max > 0)
-    {
-        stat.Value += Amount;
-    }
-    if (stat.Value > stat.Max)
-    {
-        stat.Value = stat.Max;
-    }
+    Stats[static_cast<size_t>(StatToIncrease)] += Amount;
 }
 
-void UCharacterStats::Decrease(EStats StatToIncrease, const int Amount)
+void UCharacterStats::Decrease(EStats StatToIncrease, float Amount)
 {
-    Stat& stat = Stats[static_cast<size_t>(StatToIncrease)];
-    if (stat.Value > stat.Min)
-    {
-        stat.Value -= Amount;
-    }
-    if (stat.Value < stat.Min)
-    {
-        stat.Value = stat.Min;
-    }
+    Stats[static_cast<size_t>(StatToIncrease)] -= Amount;
 }

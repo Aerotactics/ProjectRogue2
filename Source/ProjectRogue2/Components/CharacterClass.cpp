@@ -50,7 +50,7 @@ void UCharacterClass::GainExperience(const int Amount)
 		UCharacterStats* pStat = Cast<UCharacterStats>(pComponent);
 		if (pStat)
 		{
-			pStat->AddStatPoints(StatPointsPerLevel);
+			pStat->AddCoreStatPoints(StatPointsPerLevel);
 		}
 	}
 }

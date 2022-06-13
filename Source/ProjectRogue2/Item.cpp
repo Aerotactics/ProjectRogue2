@@ -29,14 +29,28 @@ void AItem::Tick(float DeltaTime)
 
 void AItem::OnEquip(ABaseCharacter* Character)
 {
-	UActorComponent* pComponent = Character->GetComponentByClass(UEquipment::StaticClass());
-	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
-	pEquipment->TryEquip(EquipSlot, this);
+	UActorComponent* Component = Character->GetComponentByClass(UCharacterStats::StaticClass());
+	UCharacterStats* StatComponent = Cast<UCharacterStats>(Component);
+	if (StatComponent != nullptr)
+	{
+		for (auto& StatEffect : Effects)
+		{
+			StatComponent->Increase(StatEffect.Stat, StatEffect.Amount);
+		}
+		OnEquipped(Character);
+	}
 }
 
 void AItem::OnUnequip(ABaseCharacter* Character)
 {
-	UActorComponent* pComponent = Character->GetComponentByClass(UEquipment::StaticClass());
-	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
-	pEquipment->TryUnequip(EquipSlot);
+	UActorComponent* Component = Character->GetComponentByClass(UCharacterStats::StaticClass());
+	UCharacterStats* StatComponent = Cast<UCharacterStats>(Component);
+	if (StatComponent != nullptr)
+	{
+		for (auto& StatEffect : Effects)
+		{
+			StatComponent->Decrease(StatEffect.Stat, StatEffect.Amount);
+		}
+		OnUnequipped(Character);
+	}
 }
