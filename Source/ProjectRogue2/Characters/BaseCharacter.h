@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "../Components/Equipment.h"
 #include "BaseCharacter.generated.h"
 
 UENUM()
@@ -53,8 +54,7 @@ public:
 	{
 		// This compile-time assert just makes sure Type is a
 		//	subclass of UClass.
-		static_assert(std::is_base_of_v<UClass, Type>());
-		UActorComponent* Component = Owner->GetComponentByClass(Type::StaticClass());
+		UActorComponent* Component = GetComponentByClass(Type::StaticClass());
 		Type* TypeComponent = Cast<Type>(Component);
 		return TypeComponent;
 	}
