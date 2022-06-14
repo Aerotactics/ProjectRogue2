@@ -48,7 +48,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	const FString& GetCharacterName() const { return Name; }
 
-	// https://stackoverflow.com/questions/122316/template-constraints-c
 	template<class Type>
 	Type* GetComponent() 
 	{

@@ -36,7 +36,7 @@ void UCharacterStats::UpdateCoreStats(const int* StartingValues)
 {
 	for (size_t i = 0; i < CoreStatCount; ++i)
 	{
-		Stats[i] = StartingValues[i];
+		Stats[(EStats)i] = StartingValues[i];
 	}
 }
 
@@ -48,16 +48,28 @@ void UCharacterStats::AllocateCoreStatPoint(EStats StatToIncrease)
         return;
     }
 
-    ++Stats[static_cast<size_t>(StatToIncrease)];
+	check(HasStat(StatToIncrease));
+    ++Stats[StatToIncrease];
     --StatPointsAvailable;
 }
 
-void UCharacterStats::Increase(EStats StatToIncrease, float Amount)
+float UCharacterStats::GetStat(EStats Stat) const
 {
-    Stats[static_cast<size_t>(StatToIncrease)] += Amount;
+	if(!HasStat(Stat))
+		return 0.0f;
+	return Stats[Stat];
 }
 
-void UCharacterStats::Decrease(EStats StatToIncrease, float Amount)
+void UCharacterStats::Increase(EStats Stat, float Amount)
 {
-    Stats[static_cast<size_t>(StatToIncrease)] -= Amount;
+	if(!HasStat(Stat))
+		return;
+    Stats[Stat] += Amount;
+}
+
+void UCharacterStats::Decrease(EStats Stat, float Amount)
+{
+	if (!HasStat(Stat))
+		return;
+    Stats[Stat] -= Amount;
 }
