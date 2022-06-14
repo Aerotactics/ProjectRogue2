@@ -37,8 +37,8 @@ void AItem::OnEquip(ABaseCharacter* Character)
 		{
 			StatComponent->Increase(StatEffect.Stat, StatEffect.Amount);
 		}
+		OnEquipped(Character);
 	}
-	OnEquipped(Character);
 }
 
 void AItem::OnUnequip(ABaseCharacter* Character)
@@ -51,6 +51,6 @@ void AItem::OnUnequip(ABaseCharacter* Character)
 		{
 			StatComponent->Decrease(StatEffect.Stat, StatEffect.Amount);
 		}
+		OnUnequipped(Character);
 	}
-	OnUnequipped(Character);
 }

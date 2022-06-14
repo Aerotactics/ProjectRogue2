@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Actor.h"
+#include "Styling/SlateBrush.h"
 #include "Characters/BaseCharacter.h"
 #include "Components/CharacterStats.h"
 #include "Components/Equipment.h"
+
 #include "Item.generated.h"
 
 UENUM()
@@ -36,6 +39,12 @@ class PROJECTROGUE2_API AItem : public AActor
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSlateBrush Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Cost;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString CustomName;
 
@@ -112,6 +121,7 @@ public:
 	const FString& GetItemName() const { return ItemName; }
 	const FString& GetDescription() const { return Description; }
 	EItemRarity GetRarity() const { return Rarity; }
+	int32 GetCost() const { return Cost; }
 	int32 GetLevelRequirement() const { return LevelRequirement; }
 	int32 GetStatLevelRequirement() const { return StatLevelRequirement; }
 	int32 GetDamage() const { return Damage; }
