@@ -19,10 +19,16 @@ enum class Gender : uint8
 	Transgender
 };
 
+class ABaseTile;
+
 UCLASS()
 class PROJECTROGUE2_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	ABaseTile* TileImOn;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	FString Name;
@@ -47,6 +53,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	const FString& GetCharacterName() const { return Name; }
+
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void SetTileImOn(ABaseTile* NewTile) { TileImOn = NewTile; }
+	ABaseTile* GetTileImOn() const { return TileImOn; }
 
 	template<class Type>
 	Type* GetComponent() 

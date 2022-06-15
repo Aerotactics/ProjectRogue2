@@ -2,6 +2,7 @@
 
 
 #include "BaseCharacter.h"
+#include "../BaseTile.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -16,6 +17,23 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	FVector Start = GetActorLocation();
+	FVector End = Start;
+	Start.Z -= 100;
+
+	FHitResult HitResult;
+	FCollisionObjectQueryParams ObjectParams;
+	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	FCollisionQueryParams QueryParams;
+	GetWorld()->DebugDrawTraceTag = QueryParams.TraceTag;
+	QueryParams.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByObjectType(HitResult, Start, End, ObjectParams, QueryParams);
+	if (ABaseTile* Tile = Cast<ABaseTile>(HitResult.Actor))
+	{
+		Tile->SetCharacterOnTile(this);
+		TileImOn = Tile;
+	}
 }
 
 // Called every frame
