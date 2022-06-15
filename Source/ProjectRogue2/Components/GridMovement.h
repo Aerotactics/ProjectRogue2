@@ -43,7 +43,7 @@ private:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float MoveDistance;
+	float Distance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	int32 StepsPerTick;
@@ -77,6 +77,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
 	ECompass GetFacingDirection();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	FVector GetInteractPosition(FVector Direction);
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FHitResult Interact(FVector InteractPosition);
+
+	float GetMovementDistance() const { return Distance; }
 
 private:
 	void Motion();
