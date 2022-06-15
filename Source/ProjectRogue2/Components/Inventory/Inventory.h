@@ -22,6 +22,13 @@ private:
 	TArray<FInventorySlot> Slots;
 	int32 Gold;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 StartingSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 StartingGold;
+
 public:	
 	// Sets default values for this component's properties
 	UInventory();
