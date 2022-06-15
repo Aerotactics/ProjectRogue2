@@ -124,9 +124,12 @@ int UEquipment::GetRange() const
 	{
 		pLeftHand->GetRange();
 	}
-	if (int RightRange = pRightHand->GetRange() > Range)
+	if (pRightHand)
 	{
-		Range = RightRange;
+		if (int RightRange = pRightHand->GetRange() > Range)
+		{
+			Range = RightRange;
+		}
 	}
 
 	return Range;
