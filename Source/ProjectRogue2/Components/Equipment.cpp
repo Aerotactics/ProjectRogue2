@@ -27,6 +27,19 @@ void UEquipment::BeginPlay()
 	Owner = Cast<ABaseCharacter>(GetOwner());
 }
 
+void UEquipment::EquipStartingItems()
+{
+	for (const auto& Item : StartingItems)
+	{
+		if (!Item.Value)
+		{
+			continue;
+		}
+		AItem* Equipment = Owner->GetWorld()->SpawnActor<AItem>(Item.Value);
+		TryEquip(Item.Key, Equipment);
+	}
+}
+
 bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 {
 	//weapons are typically equipped in the right hand

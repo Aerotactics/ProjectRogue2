@@ -36,6 +36,9 @@ protected:
 	UPROPERTY()
 	AItem* EquippedItems[static_cast<int>(EEquipmentSlot::Count)];
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
+	TMap<EEquipmentSlot, TSubclassOf<AItem>> StartingItems;
+
 public:	
 	// Sets default values for this component's properties
 	UEquipment();
@@ -45,13 +48,16 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	void EquipStartingItems();
+
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
 	AItem* GetSlot(EEquipmentSlot Slot) { return EquippedItems[static_cast<int>(Slot)]; }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
 	bool TryEquip(EEquipmentSlot Slot, AItem* Item);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
 	bool TryUnequip(EEquipmentSlot Slot, bool bIsSwap = false);
 
 	int GetRange() const;
