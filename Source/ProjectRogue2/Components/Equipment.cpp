@@ -44,18 +44,18 @@ bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 {
 	//weapons are typically equipped in the right hand
 	//so, if we are equipping in the right hand
-	if (Slot == EEquipmentSlot::RightHand)
-	{
-		AItem* CurrentlyEquipped = GetSlot(Slot);
-		//but we already have something in that hand
-		if (CurrentlyEquipped)
-		{
-			//put it in the other hand
-			EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)] = Item;
-			Item->OnEquip(Cast<ABaseCharacter>(Owner));
-			return true;
-		}
-	}
+	//if (Slot == EEquipmentSlot::RightHand)
+	//{
+	//	AItem* CurrentlyEquipped = GetSlot(Slot);
+	//	//but we already have something in that hand
+	//	if (CurrentlyEquipped)
+	//	{
+	//		//put it in the other hand
+	//		EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)] = Item;
+	//		Item->OnEquip(Cast<ABaseCharacter>(Owner));
+	//		return true;
+	//	}
+	//}
 
 	if (Slot != Item->GetEquipSlot())
 	{
