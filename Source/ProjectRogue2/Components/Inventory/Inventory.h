@@ -83,4 +83,5 @@ public:
 private:
 	int32 FillExistingStacks(TSubclassOf<AItem> Class, int32 Amount);
 	int32 FindEmptySlot(bool reverse = false) const;
+	void ShiftEmptySlots();
 };
