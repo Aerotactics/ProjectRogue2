@@ -6,6 +6,20 @@
 #include "Components/ActorComponent.h"
 #include "CharacterStats.generated.h"
 
+//enemy party and leader
+
+UENUM()
+enum class EClass
+{
+    Warrior,
+    Rogue,
+    Paladin,
+    Cleric,
+    Mage,
+    Warlock,
+    Hunter,
+};
+
 UENUM(Blueprintable)
 enum class EStats : uint8
 {
@@ -15,6 +29,9 @@ enum class EStats : uint8
     Intelligence,
     Vitality,
     Luck,
+
+    StatPointsPerLevel,
+    StatPointsAvailable,
 
     // RESOURCES, SKILLS, MISC (Transparent to player)
     CurrentHealth,
@@ -52,11 +69,11 @@ class PROJECTROGUE2_API UCharacterStats : public UActorComponent
 	GENERATED_BODY()
 
 protected:
-    UPROPERTY(EditAnywhere)
-    TMap<EStats, float> Stats;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    EClass CharacterClass;
 
-    UPROPERTY(EditAnywhere)
-    int32 StatPointsAvailable;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    TMap<EStats, float> Stats;
 
 public:	
 	// Sets default values for this component's properties
@@ -72,9 +89,8 @@ public:
 
     // TODO: Revisit this during character creation
     void UpdateCoreStats(const int* StartingValues);
-    void AddCoreStatPoints(const int Amount) { StatPointsAvailable += Amount; }
+    void AddAvailableStatPoints(const int Amount) { Increase(EStats::StatPointsAvailable, Amount); }
     void AllocateCoreStatPoint(EStats StatToIncrease);
-    int32 GetAvailableStatPoints() const { return StatPointsAvailable; }
 
     bool HasStat(EStats Stat) const { return Stats.Contains(Stat); }
     float GetStat(EStats Stat) const;

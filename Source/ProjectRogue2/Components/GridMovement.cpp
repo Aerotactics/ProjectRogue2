@@ -121,6 +121,9 @@ void UGridMovement::Move(EDirection Direction)
 			//if there is a character already on the tile we're trying to move to, we cant move
 			return;
 		}
+
+		ABaseTile* TileImOn = Owner->GetTileImOn();
+		TileImOn->SetCharacterOnTile(nullptr);
 		Tile->SetCharacterOnTile(Owner);
 		Owner->SetTileImOn(Tile);
 	}

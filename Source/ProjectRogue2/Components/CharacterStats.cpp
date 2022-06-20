@@ -50,7 +50,7 @@ void UCharacterStats::AllocateCoreStatPoint(EStats StatToIncrease)
 
 	check(HasStat(StatToIncrease));
     ++Stats[StatToIncrease];
-    --StatPointsAvailable;
+	Decrease(EStats::StatPointsAvailable);
 }
 
 float UCharacterStats::GetStat(EStats Stat) const
