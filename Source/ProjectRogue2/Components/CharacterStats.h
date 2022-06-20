@@ -52,10 +52,10 @@ class PROJECTROGUE2_API UCharacterStats : public UActorComponent
 	GENERATED_BODY()
 
 protected:
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     TMap<EStats, float> Stats;
 
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     int32 StatPointsAvailable;
 
 public:	
