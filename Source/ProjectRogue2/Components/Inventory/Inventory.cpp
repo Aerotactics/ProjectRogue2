@@ -22,6 +22,8 @@ void UInventory::BeginPlay()
 
 	// ...
     Owner = Cast<ABaseCharacter>(GetOwner());
+    IncreaseInventorySize(StartingSize);
+    Gold += StartingGold;
 }
 
 bool UInventory::DecreaseGold(const int32 Amount)

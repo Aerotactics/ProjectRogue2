@@ -12,11 +12,8 @@ ABaseTile::ABaseTile()
 	SetRootComponent(StaticMesh);
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	Collision->SetupAttachment(StaticMesh);
-<<<<<<< Updated upstream
-=======
 	//Collision->OnComponentBeginOverlap.AddDynamic(this, &ABaseTile::OnOverlapBegin);
 	//Collision->OnComponentEndOverlap.AddDynamic(this, &ABaseTile::OnOverlapEnd);
->>>>>>> Stashed changes
 }
 
 // Called when the game starts or when spawned
@@ -25,8 +22,6 @@ void ABaseTile::BeginPlay()
 	Super::BeginPlay();
 	
 }
-<<<<<<< Updated upstream
-=======
 
 //void ABaseTile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 //{
@@ -37,4 +32,3 @@ void ABaseTile::BeginPlay()
 //{
 //	CharacterOnTile = nullptr;
 //}
->>>>>>> Stashed changes

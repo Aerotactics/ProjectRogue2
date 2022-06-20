@@ -125,6 +125,8 @@ bool UEquipment::TryUnequip(EEquipmentSlot Slot, bool bIsSwap)
 
 	// Try Add the item to inventory
 	pInventory->AddItem(CurrentlyEquipped->GetClass(), 1);
+	//destroy the item actor
+	EquippedItems[static_cast<size_t>(Slot)]->Destroy();
 	//remove item from equipped items
 	EquippedItems[static_cast<size_t>(Slot)] = nullptr;
 	return true;
@@ -140,9 +142,12 @@ int UEquipment::GetRange() const
 	{
 		pLeftHand->GetRange();
 	}
-	if (int RightRange = pRightHand->GetRange() > Range)
+	if (pRightHand)
 	{
-		Range = RightRange;
+		if (int RightRange = pRightHand->GetRange() > Range)
+		{
+			Range = RightRange;
+		}
 	}
 
 	return Range;

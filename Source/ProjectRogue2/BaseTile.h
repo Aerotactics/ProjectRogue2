@@ -41,9 +41,8 @@ public:
 
 	int32 GetTileSize() const { return TileSize; }
 	ABaseCharacter* GetCharacterOnTile() const { return CharacterOnTile; }
+	UFUNCTION(BlueprintCallable, Category = "Tile")
 	void SetCharacterOnTile(ABaseCharacter* NewCharacter) { CharacterOnTile = NewCharacter; }
-<<<<<<< Updated upstream
-=======
 
 	//This was set up so that way characters moving away from tiles would be detected by the tile
 	// but Michael noted how that can just be done in GridMovement, so this is commented out for 
@@ -52,5 +51,4 @@ public:
 	//void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	//UFUNCTION()
 	//void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
->>>>>>> Stashed changes
 };

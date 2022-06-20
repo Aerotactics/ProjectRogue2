@@ -12,7 +12,7 @@ UGridMovement::UGridMovement()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.TickInterval = 0.01f;
-	MoveDistance = 100;
+	Distance = 100;
 	StepsPerTick = 5;
 	RotationsPerTick = 1;
 	Owner = nullptr;
@@ -68,22 +68,22 @@ void UGridMovement::Move(EDirection Direction)
 	{
 		case EDirection::Forward: 
 		{
-			Offset = ForwardVector * MoveDistance;
+			Offset = ForwardVector * Distance;
 		}
 		break;
 		case EDirection::Backward:
 		{
-			Offset = (ForwardVector * -1) * MoveDistance;
+			Offset = (ForwardVector * -1) * Distance;
 		}
 		break;
 		case EDirection::Left:	  
 		{
 			switch (GetFacingDirection())
 			{
-				case ECompass::North: Offset.X = MoveDistance * -1; break;
-				case ECompass::South: Offset.X = MoveDistance;		break;
-				case ECompass::East:  Offset.Y = MoveDistance * -1;	break;
-				case ECompass::West:  Offset.Y = MoveDistance;		break;
+				case ECompass::North: Offset.X = Distance * -1; break;
+				case ECompass::South: Offset.X = Distance;		break;
+				case ECompass::East:  Offset.Y = Distance * -1;	break;
+				case ECompass::West:  Offset.Y = Distance;		break;
 			}
 		}
 		break;
@@ -91,10 +91,10 @@ void UGridMovement::Move(EDirection Direction)
 		{
 			switch (GetFacingDirection())
 			{
-				case ECompass::North: Offset.X = MoveDistance;		break;
-				case ECompass::South: Offset.X = MoveDistance * -1;	break;
-				case ECompass::East:  Offset.Y = MoveDistance;		break;
-				case ECompass::West:  Offset.Y = MoveDistance * -1;	break;
+				case ECompass::North: Offset.X = Distance;		break;
+				case ECompass::South: Offset.X = Distance * -1;	break;
+				case ECompass::East:  Offset.Y = Distance;		break;
+				case ECompass::West:  Offset.Y = Distance * -1;	break;
 			}
 		}
 		break;
@@ -106,16 +106,17 @@ void UGridMovement::Move(EDirection Direction)
 	Position.Z = FMath::RoundHalfToEven(Position.Z);
 
 	//line trace the tile before moving so we dont move to a tile another character is moving to
-	FHitResult HitResult;
-	FVector Start = Owner->GetActorLocation();
-	FCollisionObjectQueryParams ObjectParams;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(Owner);
-	GetWorld()->LineTraceSingleByObjectType(HitResult, Start, Position, ObjectParams, QueryParams);
+	FHitResult HitResult = Interact(Position);
 	if (HitResult.Actor.IsValid())
 	{
 		ABaseTile* Tile = Cast<ABaseTile>(HitResult.Actor);
-		if (Tile->GetCharacterOnTile())
+		if (!Tile)
+		{
+			return;
+		}
+
+		ABaseCharacter* Character = Tile->GetCharacterOnTile();
+		if (Character)
 		{
 			//if there is a character already on the tile we're trying to move to, we cant move
 			return;
@@ -124,6 +125,7 @@ void UGridMovement::Move(EDirection Direction)
 		ABaseTile* TileImOn = Owner->GetTileImOn();
 		TileImOn->SetCharacterOnTile(nullptr);
 		Tile->SetCharacterOnTile(Owner);
+		Owner->SetTileImOn(Tile);
 	}
 
 	NextPosition.SetLocation(Position);
@@ -155,10 +157,6 @@ void UGridMovement::Turn(EDirection Direction)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////
-// Private Functions
-////////////////////////////////////////////////////////////////////////////
-
 ECompass UGridMovement::GetFacingDirection()
 {
 	FVector ForwardVector = Owner->GetActorForwardVector();
@@ -180,9 +178,33 @@ ECompass UGridMovement::GetFacingDirection()
 	{
 		return ECompass::North;
 	}
-	
+
 	return ECompass::Diagonal;
 }
+
+FVector UGridMovement::GetInteractPosition(FVector Direction)
+{
+	FVector Start = Owner->GetActorLocation();
+	return Start + (Direction * Distance);
+}
+
+FHitResult UGridMovement::Interact(FVector InteractPosition)
+{
+	FHitResult HitResult;
+	FVector Start = Owner->GetActorLocation();
+	FCollisionObjectQueryParams ObjectParams;
+	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(Owner);
+	QueryParams.AddIgnoredActor(Owner->GetTileImOn());
+	GetWorld()->LineTraceSingleByObjectType(HitResult, Start, InteractPosition, ObjectParams, QueryParams);
+	return HitResult;
+}
+
+////////////////////////////////////////////////////////////////////////////
+// Private Functions
+////////////////////////////////////////////////////////////////////////////
 
 void UGridMovement::Motion()
 {
