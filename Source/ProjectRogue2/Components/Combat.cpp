@@ -39,8 +39,8 @@ void UCombat::Attack(FString& LogMessage, ABaseCharacter* Target)
 	UEquipment* pEquipment = Owner->GetComponent<UEquipment>();
 	if (pEquipment)
 	{
-		pEquipment->GetRange();
-		pEquipment->GetWeaponDamage();
+		Range += pEquipment->GetRange();
+		Damage += pEquipment->GetWeaponDamage();
 	}
 
 	UCharacterStats* pStat = Owner->GetComponent<UCharacterStats>();
@@ -77,6 +77,10 @@ void UCombat::Attack(FString& LogMessage, ABaseCharacter* Target)
 			Log.Append(" damage.");
 			LogMessage = Log;
 		}
+	}
+	else
+	{
+		//LOG
 	}
 }
 
