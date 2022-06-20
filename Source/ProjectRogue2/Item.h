@@ -9,6 +9,8 @@
 #include "Components/Equipment.h"
 #include "Item.generated.h"
 
+//weighted random class
+
 UENUM()
 enum class EItemRarity
 {
@@ -24,10 +26,10 @@ struct FStatEffect
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Stats")
-	EStats Stat;
+	EStats Stat = EStats::Count;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Stats")
-	float Amount;
+	float Amount = 0;
 };
 
 UCLASS()
@@ -61,6 +63,9 @@ protected:
 	int32 Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ExtraDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Durability;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -71,6 +76,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxStackSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CooldownInTurns;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEquipmentSlot EquipSlot;
@@ -100,13 +108,13 @@ public:
 	void OnUse(ABaseCharacter* Character);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnEquipped(ABaseCharacter* Character);
+	void OnEquipped(ABaseCharacter* Character, EEquipmentSlot Slot);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnUnequipped(ABaseCharacter* Character);
+	void OnUnequipped(ABaseCharacter* Character, EEquipmentSlot Slot);
 
-	void OnEquip(ABaseCharacter* Character);
-	void OnUnequip(ABaseCharacter* Character);
+	void OnEquip(ABaseCharacter* Character, EEquipmentSlot Slot);
+	void OnUnequip(ABaseCharacter* Character, EEquipmentSlot Slot);
 
 	const FString& GetCustomName() const { return CustomName; }
 	const FString& GetItemName() const { return ItemName; }
@@ -115,6 +123,7 @@ public:
 	int32 GetLevelRequirement() const { return LevelRequirement; }
 	int32 GetStatLevelRequirement() const { return StatLevelRequirement; }
 	int32 GetDamage() const { return Damage; }
+	int32 GetExtraDamage() const { return ExtraDamage; }
 	int32 GetDurabiliy() const { return Durability; }
 	int32 GetArmor() const { return Armor; }
 	int32 GetRange() const { return Range; }

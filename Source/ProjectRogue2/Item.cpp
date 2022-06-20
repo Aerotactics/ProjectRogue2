@@ -10,7 +10,7 @@ AItem::AItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	Effects = TArray<FStatEffect>();
 }
 
 // Called when the game starts or when spawned
@@ -27,7 +27,7 @@ void AItem::Tick(float DeltaTime)
 
 }
 
-void AItem::OnEquip(ABaseCharacter* Character)
+void AItem::OnEquip(ABaseCharacter* Character, EEquipmentSlot Slot)
 {
 	UActorComponent* Component = Character->GetComponentByClass(UCharacterStats::StaticClass());
 	UCharacterStats* StatComponent = Cast<UCharacterStats>(Component);
@@ -39,9 +39,13 @@ void AItem::OnEquip(ABaseCharacter* Character)
 		}
 		OnEquipped(Character);
 	}
+<<<<<<< Updated upstream
+=======
+	OnEquipped(Character, Slot);
+>>>>>>> Stashed changes
 }
 
-void AItem::OnUnequip(ABaseCharacter* Character)
+void AItem::OnUnequip(ABaseCharacter* Character, EEquipmentSlot Slot)
 {
 	UActorComponent* Component = Character->GetComponentByClass(UCharacterStats::StaticClass());
 	UCharacterStats* StatComponent = Cast<UCharacterStats>(Component);
@@ -53,4 +57,8 @@ void AItem::OnUnequip(ABaseCharacter* Character)
 		}
 		OnUnequipped(Character);
 	}
+<<<<<<< Updated upstream
+=======
+	OnUnequipped(Character, Slot);
+>>>>>>> Stashed changes
 }

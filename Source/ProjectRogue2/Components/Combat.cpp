@@ -30,6 +30,7 @@ void UCombat::BeginPlay()
 
 void UCombat::Attack()
 {
+<<<<<<< Updated upstream
 	UActorComponent* pComponent = nullptr;
 	pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
 	check(pComponent);
@@ -40,6 +41,18 @@ void UCombat::Attack()
 	pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
 	check(pComponent);
 	UCharacterStats* pStat = Cast<UCharacterStats>(pComponent);
+=======
+	int Damage = 0;
+	int Range = MeleeRange;
+	UEquipment* pEquipment = Owner->GetComponent<UEquipment>();
+	if (pEquipment)
+	{
+		Range += pEquipment->GetRange();
+		Damage += pEquipment->GetWeaponDamage();
+	}
+
+	UCharacterStats* pStat = Owner->GetComponent<UCharacterStats>();
+>>>>>>> Stashed changes
 	check(pStat);
 
 	if (Range == MeleeRange)
@@ -67,6 +80,10 @@ void UCombat::Attack()
 		{
 			pCombat->TakeDamage(Damage);
 		}
+	}
+	else
+	{
+		//LOG
 	}
 }
 
