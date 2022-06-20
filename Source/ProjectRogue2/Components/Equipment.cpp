@@ -5,7 +5,7 @@
 #include "../Item.h"
 #include "Inventory/Inventory.h"
 #include "../Characters/BaseCharacter.h"
-#include "../Components/CharacterClass.h"
+#include "../Components/CharacterStats.h"
 
 // Sets default values for this component's properties
 UEquipment::UEquipment()
@@ -44,20 +44,25 @@ bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 {
 	//weapons are typically equipped in the right hand
 	//so, if we are equipping in the right hand
-	//if (Slot == EEquipmentSlot::RightHand)
-	//{
-	//	AItem* CurrentlyEquipped = GetSlot(Slot);
-	//	//but we already have something in that hand
-	//	if (CurrentlyEquipped)
-	//	{
-	//		//put it in the other hand
-	//		EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)] = Item;
-	//		Item->OnEquip(Cast<ABaseCharacter>(Owner));
-	//		return true;
-	//	}
-	//}
+	if (Slot == EEquipmentSlot::RightHand)
+	{
+		AItem* CurrentlyEquipped = GetSlot(Slot);
+		//but we already have something in that hand
+		if (CurrentlyEquipped)
+		{
+			//put it in the other hand
+			EquippedItems[static_cast<int>(EEquipmentSlot::LeftHand)] = Item;
+			if (!TryUnequip(EEquipmentSlot::LeftHand, true))
+			{
+				//Log
+				return false;
+			}
+			Item->OnEquip(Cast<ABaseCharacter>(Owner), EEquipmentSlot::LeftHand);
+			return true;
+		}
+	}
 
-	if (Slot != Item->GetEquipSlot())
+	if (Item->GetEquipSlot() == EEquipmentSlot::Count)
 	{
 		//Log
 		return false;
@@ -67,8 +72,8 @@ bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 	int32 LevelRequirement = Item->GetLevelRequirement();
 	if (LevelRequirement > 0)
 	{
-		UCharacterClass* ClassComponent = Owner->GetComponent<UCharacterClass>();
-		if (ClassComponent != nullptr && ClassComponent->GetLevel() < LevelRequirement)
+		UCharacterStats* pStats = Owner->GetComponent<UCharacterStats>();
+		if (pStats != nullptr && pStats->GetStat(EStats::Level) < LevelRequirement)
 		{
 			// Log
 			return false;
@@ -94,7 +99,7 @@ bool UEquipment::TryEquip(EEquipmentSlot Slot, AItem* Item)
 	}
 
 	EquippedItems[(int)Slot] = Item;
-	Item->OnEquip(Cast<ABaseCharacter>(Owner));
+	Item->OnEquip(Cast<ABaseCharacter>(Owner), Slot);
 	return true;
 }
 
@@ -108,7 +113,7 @@ bool UEquipment::TryUnequip(EEquipmentSlot Slot, bool bIsSwap)
 		return true;
 	}
 
-	CurrentlyEquipped->OnUnequip(Cast<ABaseCharacter>(GetOwner()));
+	CurrentlyEquipped->OnUnequip(Cast<ABaseCharacter>(GetOwner()), Slot);
 	UActorComponent* pComponent = Owner->GetComponentByClass(UInventory::StaticClass());
 	UInventory* pInventory = Cast<UInventory>(pComponent);
 
@@ -156,10 +161,20 @@ int UEquipment::GetWeaponDamage() const
 	if (pLeftHand)
 	{
 		Damage += pLeftHand->GetDamage();
+		//you have a 25% chance of dealing extra damage
+		if (FMath::RandRange(1, 100) < 25)
+		{
+			Damage += pLeftHand->GetExtraDamage();
+		}
 	}
 	if (pRightHand)
 	{
 		Damage += pRightHand->GetDamage();
+		//you have a 25% chance of dealing extra damage
+		if (FMath::RandRange(1, 100) < 25)
+		{
+			Damage += pRightHand->GetExtraDamage();
+		}
 	}
 
 	return Damage;

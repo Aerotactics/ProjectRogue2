@@ -12,7 +12,6 @@ class ABaseCharacter;
 UENUM(Blueprintable)
 enum class EEquipmentSlot : uint8
 {
-	None,
 	Head,
 	Chest,
 	Legs,
@@ -20,9 +19,10 @@ enum class EEquipmentSlot : uint8
 	Hands,
 	LeftHand,
 	RightHand,
-	
 	Count,
 };
+
+static constexpr unsigned int kEquipmentSlotCount = static_cast<unsigned int>(EEquipmentSlot::Count);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTROGUE2_API UEquipment : public UActorComponent
@@ -34,7 +34,7 @@ private:
 
 protected:
 	UPROPERTY()
-	AItem* EquippedItems[static_cast<int>(EEquipmentSlot::Count)];
+	AItem* EquippedItems[kEquipmentSlotCount];
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
 	TMap<EEquipmentSlot, TSubclassOf<AItem>> StartingItems;
