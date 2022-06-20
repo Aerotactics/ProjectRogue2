@@ -4,6 +4,7 @@
 #include "CharacterClass.h"
 #include "CharacterStats.h"
 
+/*
 // Sets default values for this component's properties
 UCharacterClass::UCharacterClass()
 {
@@ -63,3 +64,4 @@ void UCharacterClass::LoseExperience(const int Amount)
 		Experience = 0;
 	}
 }
+*/

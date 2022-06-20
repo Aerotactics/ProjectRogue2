@@ -45,13 +45,13 @@ bool UInventory::DecreaseGold(const int32 Amount)
 
 void UInventory::IncreaseInventorySize(const int32 Amount)
 {
-    int32 i = Slots.Num();
-    Slots.Reserve(Slots.Num() + Amount);
-    for (; i < Amount; ++i)
+    int32 CurrentSlotCount = Slots.Num();
+    int32 NewSlotCount = CurrentSlotCount + Amount;
+    for (int32 i = CurrentSlotCount; i < NewSlotCount; ++i)
     {
         FInventorySlot Slot;
         Slot.Index = i;
-        Slots.Emplace();
+        Slots.Emplace(Slot);
     }
 }
 
@@ -82,6 +82,7 @@ bool UInventory::AddItem(TSubclassOf<AItem> pClass, int32 Amount)
     Slots[emptySlot].Class = pClass;
     //LOG
     Slots[emptySlot].Amount = Amount;
+    ShiftEmptySlots();
     return true;
 }
 
@@ -118,6 +119,7 @@ bool UInventory::UseItem(const int32 Index, int32 Amount)
         Slot.Class = nullptr;
     }
 
+    ShiftEmptySlots();
     return true;
 }
 
@@ -267,7 +269,7 @@ int UInventory::FindEmptySlot(bool reverse) const
 {
     if (reverse)
     {
-        for (int i = Slots.Num() - 1; i >= 0; --i)
+        for (int32 i = Slots.Num() - 1; i >= 0; --i)
         {
             if (Slots[i].Class == nullptr)
             {
@@ -277,7 +279,7 @@ int UInventory::FindEmptySlot(bool reverse) const
     }
     else
     {
-        for (int i = 0; i < Slots.Num(); ++i)
+        for (int32 i = 0; i < Slots.Num(); ++i)
         {
             if (Slots[i].Class == nullptr)
             {
@@ -287,4 +289,18 @@ int UInventory::FindEmptySlot(bool reverse) const
     }
 
     return -1;
+}
+
+void UInventory::ShiftEmptySlots()
+{
+    for (int32 i = 0; i < Slots.Num() - 1; ++i)
+    {
+        if (!Slots[i].Class)
+        {
+            Slots[i].Class = Slots[i + 1].Class;
+            Slots[i].Amount = Slots[i + 1].Amount;
+            Slots[i + 1].Class = nullptr;
+            Slots[i + 1].Amount = 0;
+        }
+    }
 }
