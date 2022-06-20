@@ -10,7 +10,7 @@ AItem::AItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	Effects = TArray<FStatEffect>();
 }
 
 // Called when the game starts or when spawned
@@ -27,16 +27,30 @@ void AItem::Tick(float DeltaTime)
 
 }
 
-void AItem::OnEquip(ABaseCharacter* Character)
+void AItem::OnEquip(ABaseCharacter* Character, EEquipmentSlot Slot)
 {
-	UActorComponent* pComponent = Character->GetComponentByClass(UEquipment::StaticClass());
-	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
-	pEquipment->TryEquip(EquipSlot, this);
+	UActorComponent* Component = Character->GetComponentByClass(UCharacterStats::StaticClass());
+	UCharacterStats* StatComponent = Cast<UCharacterStats>(Component);
+	if (StatComponent != nullptr)
+	{
+		for (auto& StatEffect : Effects)
+		{
+			StatComponent->Increase(StatEffect.Stat, StatEffect.Amount);
+		}
+	}
+	OnEquipped(Character, Slot);
 }
 
-void AItem::OnUnequip(ABaseCharacter* Character)
+void AItem::OnUnequip(ABaseCharacter* Character, EEquipmentSlot Slot)
 {
-	UActorComponent* pComponent = Character->GetComponentByClass(UEquipment::StaticClass());
-	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
-	pEquipment->TryUnequip(EquipSlot);
+	UActorComponent* Component = Character->GetComponentByClass(UCharacterStats::StaticClass());
+	UCharacterStats* StatComponent = Cast<UCharacterStats>(Component);
+	if (StatComponent != nullptr)
+	{
+		for (auto& StatEffect : Effects)
+		{
+			StatComponent->Decrease(StatEffect.Stat, StatEffect.Amount);
+		}
+	}
+	OnUnequipped(Character, Slot);
 }

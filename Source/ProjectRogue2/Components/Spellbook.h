@@ -32,8 +32,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Spell")
+	const TArray<ABaseSpell*> GetSpells() const { return Spells; }
+
 	bool AddSpell(ABaseSpell* Spell);
 	bool HasSpell(const FString& Name) const;
 	ABaseSpell* GetSpell(const FString& Name) const;
-	const TArray<ABaseSpell*> GetSpells() const { return Spells; }
 };

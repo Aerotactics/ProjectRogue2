@@ -20,4 +20,6 @@ struct FInventorySlot
 	TSubclassOf<AItem> Class = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	int32 Amount = 0;
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
+	int32 Index = 0;
 };

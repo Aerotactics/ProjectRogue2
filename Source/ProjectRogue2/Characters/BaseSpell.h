@@ -48,6 +48,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Spell")
 	void OnHealCasted();
 
+	UFUNCTION(BlueprintCallable, Category = "Spell")
 	void CastSpell(ABaseCharacter* pCaster, ABaseCharacter* pTarget);
 
 	const FString& GetSpellName() const { return Name; }

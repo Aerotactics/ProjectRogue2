@@ -18,12 +18,14 @@ enum class EDirection : uint8
 	Right,
 };
 
+UENUM()
 enum class ECompass : uint8
 {
 	North,
 	South,
 	East,
 	West,
+	Diagonal,
 };
 
 class ABaseCharacter;
@@ -36,13 +38,12 @@ class PROJECTROGUE2_API UGridMovement : public UActorComponent
 private:
 	ABaseCharacter* Owner;
 	FTransform NextPosition;
-	ECompass FacingDirection;
 	EDirection DirectionToMove;
 	bool IsActive;
 
-public:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float MoveDistance;
+	float Distance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	int32 StepsPerTick;
@@ -64,6 +65,7 @@ public:
 
 	//step1: linear movement
 	//step2: easing movement
+
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void Move(EDirection Direction);
 
@@ -72,6 +74,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "Movement")
 	ABaseCharacter* GetBaseCharacter() const { return Owner; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	ECompass GetFacingDirection();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	FVector GetInteractPosition(FVector Direction);
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FHitResult Interact(FVector InteractPosition);
+
+	float GetMovementDistance() const { return Distance; }
 
 private:
 	void Motion();

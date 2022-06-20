@@ -2,6 +2,7 @@
 
 
 #include "Inventory.h"
+#include "../../Characters/BaseCharacter.h"
 
 // Sets default values for this component's properties
 UInventory::UInventory()
@@ -20,15 +21,37 @@ void UInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+    Owner = Cast<ABaseCharacter>(GetOwner());
+    IncreaseInventorySize(StartingSize);
+    Gold += StartingGold;
+}
+
+bool UInventory::DecreaseGold(const int32 Amount)
+{
+    if ((Gold - Amount) < 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Cannot remove %d gold, only have %d"), Amount, Gold);
+        return false;
+    }
+
+    Gold -= Amount;
+    if (Gold < 0)
+    {
+        Gold = 0;
+    }
+
+    return true;
 }
 
 void UInventory::IncreaseInventorySize(const int32 Amount)
 {
-    Slots.Reserve(Slots.Num() + Amount);
-    for (int32 i = 0; i < Amount; ++i)
+    int32 CurrentSlotCount = Slots.Num();
+    int32 NewSlotCount = CurrentSlotCount + Amount;
+    for (int32 i = CurrentSlotCount; i < NewSlotCount; ++i)
     {
-        Slots.Emplace(FInventorySlot{});
+        FInventorySlot Slot;
+        Slot.Index = i;
+        Slots.Emplace(Slot);
     }
 }
 
@@ -59,10 +82,86 @@ bool UInventory::AddItem(TSubclassOf<AItem> pClass, int32 Amount)
     Slots[emptySlot].Class = pClass;
     //LOG
     Slots[emptySlot].Amount = Amount;
+    ShiftEmptySlots();
     return true;
 }
 
-void UInventory::DropItem(const int32 Index)
+bool UInventory::UseItem(const int32 Index, int32 Amount)
+{
+    if (Index < 0 || Index >= Slots.Num())
+    {
+        //LOG
+        return false;
+    }
+
+    auto& Slot = Slots[Index];
+    if (!Slot.Class)
+    {
+        //LOG
+        return false;
+    }
+
+    //make sure we dont attempt to use more than there is in the slot
+    if (Amount > Slot.Amount)
+    {
+        Amount = Slot.Amount;
+    }
+
+    AItem* Item = GetWorld()->SpawnActor<AItem>(Slot.Class);
+    for (int32 i = 0; i < Amount; ++i)
+    {
+        Item->OnUse(Owner);
+        --Slot.Amount;
+    }
+
+    if (Slot.Amount == 0)
+    {
+        Slot.Class = nullptr;
+    }
+
+    ShiftEmptySlots();
+    return true;
+}
+
+int32 UInventory::FindItemByClass(TSubclassOf<AItem> Class, bool Reverse) const
+{
+    if (Reverse)
+    {
+        for (int i = Slots.Num() - 1; i >= 0; --i)
+        {
+            if (Slots[i].Class == Class)
+            {
+                return i;
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < Slots.Num(); ++i)
+        {
+            if (Slots[i].Class == Class)
+            {
+                return i;
+            }
+        }
+    }
+
+    return -1;
+}
+
+void UInventory::DropItem(const int32 Index, const int32 Amount)
+{
+    //create loot actor
+    DeleteItem(Index, Amount);
+}
+
+void UInventory::DropStack(const int32 Index)
+{
+    auto& Slot = GetSlot(Index);
+    DropItem(Index, Slot.Amount);
+}
+
+void UInventory::DeleteItem(const int32 Index, const int32 Amount)
 {
     if (Index < 0 || Index >= Slots.Num())
     {
@@ -71,14 +170,48 @@ void UInventory::DropItem(const int32 Index)
     }
 
     FInventorySlot& pSlot = Slots[Index];
-    //create item actor
-    pSlot.Class = nullptr;
-    pSlot.Amount = 0;
+    //remove item from inventory without creating loot actor, deleting the item from the game
+    pSlot.Amount -= Amount;
+    if (pSlot.Amount <= 0)
+    {
+        pSlot.Class = nullptr;
+        pSlot.Amount = 0;
+    }
+}
+
+void UInventory::RemoveItemByClass(TSubclassOf<AItem> Class, int32 Amount, bool Reverse)
+{
+    while (Amount > 0)
+    {
+        const int32 Index = FindItemByClass(Class, Reverse);
+        if (Index == -1)
+        {
+            //LOG
+            return;
+        }
+
+        //amount = 300, slot = 36/50, LeftOvers = -264
+        //amount = 5,   slot = 36/50, LeftOvers = 31
+        //amount = 14,  slot = 36/50, LeftOvers = 22
+
+        FInventorySlot& Slot = Slots[Index];
+        const int32 LeftOvers = Slot.Amount - Amount;
+        Amount -= Slot.Amount;
+        if (LeftOvers > 0)
+        {
+            DropItem(Index, Amount);
+        }
+        else
+        {
+            DropStack(Index);
+        }
+    }
 }
 
 const FInventorySlot& UInventory::GetSlot(const int32 Index) const
 {
     check(Index >= 0 && Index < Slots.Num());
+    //LOG?
     return Slots[Index];
 }
 
@@ -96,6 +229,9 @@ bool UInventory::IsInventoryFull() const
     return true;
 }
 
+////////////////////////////////////////////////////////////////////////////
+// Private Functions
+////////////////////////////////////////////////////////////////////////////
 
 int32_t UInventory::FillExistingStacks(TSubclassOf<AItem> pClass, int32 Amount)
 {
@@ -133,7 +269,7 @@ int UInventory::FindEmptySlot(bool reverse) const
 {
     if (reverse)
     {
-        for (int i = Slots.Num() - 1; i >= 0; --i)
+        for (int32 i = Slots.Num() - 1; i >= 0; --i)
         {
             if (Slots[i].Class == nullptr)
             {
@@ -143,7 +279,7 @@ int UInventory::FindEmptySlot(bool reverse) const
     }
     else
     {
-        for (int i = 0; i < Slots.Num(); ++i)
+        for (int32 i = 0; i < Slots.Num(); ++i)
         {
             if (Slots[i].Class == nullptr)
             {
@@ -153,4 +289,18 @@ int UInventory::FindEmptySlot(bool reverse) const
     }
 
     return -1;
+}
+
+void UInventory::ShiftEmptySlots()
+{
+    for (int32 i = 0; i < Slots.Num() - 1; ++i)
+    {
+        if (!Slots[i].Class)
+        {
+            Slots[i].Class = Slots[i + 1].Class;
+            Slots[i].Amount = Slots[i + 1].Amount;
+            Slots[i + 1].Class = nullptr;
+            Slots[i + 1].Amount = 0;
+        }
+    }
 }

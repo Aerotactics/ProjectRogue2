@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "../Components/Equipment.h"
 #include "BaseCharacter.generated.h"
 
 UENUM()
@@ -18,10 +19,16 @@ enum class Gender : uint8
 	Transgender
 };
 
+class ABaseTile;
+
 UCLASS()
 class PROJECTROGUE2_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	ABaseTile* TileImOn;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	FString Name;
@@ -46,4 +53,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	const FString& GetCharacterName() const { return Name; }
+
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void SetTileImOn(ABaseTile* NewTile) { TileImOn = NewTile; }
+	ABaseTile* GetTileImOn() const { return TileImOn; }
+
+	template<class Type>
+	Type* GetComponent() 
+	{
+		// This compile-time assert just makes sure Type is a
+		//	subclass of UClass.
+		UActorComponent* Component = GetComponentByClass(Type::StaticClass());
+		Type* TypeComponent = Cast<Type>(Component);
+		return TypeComponent;
+	}
 };

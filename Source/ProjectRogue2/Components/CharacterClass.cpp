@@ -4,6 +4,7 @@
 #include "CharacterClass.h"
 #include "CharacterStats.h"
 
+/*
 // Sets default values for this component's properties
 UCharacterClass::UCharacterClass()
 {
@@ -50,7 +51,17 @@ void UCharacterClass::GainExperience(const int Amount)
 		UCharacterStats* pStat = Cast<UCharacterStats>(pComponent);
 		if (pStat)
 		{
-			pStat->AddStatPoints(StatPointsPerLevel);
+			pStat->AddCoreStatPoints(StatPointsPerLevel);
 		}
 	}
 }
+
+void UCharacterClass::LoseExperience(const int Amount)
+{
+	Experience -= Amount;
+	if (Experience < 0)
+	{
+		Experience = 0;
+	}
+}
+*/

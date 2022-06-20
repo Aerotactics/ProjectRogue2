@@ -3,6 +3,7 @@
 
 #include "Combat.h"
 #include "../Characters/BaseCharacter.h"
+#include "../Characters/BaseSpell.h"
 #include "../Item.h"
 #include "CharacterStats.h"
 #include "Equipment.h"
@@ -13,7 +14,9 @@ UCombat::UCombat()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	StartingHealth = 0;
+	StartingMana = 0;
+	MeleeRange = 0;
 	// ...
 }
 
@@ -25,6 +28,65 @@ void UCombat::BeginPlay()
 
 	// ...
 	Owner = Cast<ABaseCharacter>(GetOwner());
+	CurrentHealth = MaxHealth = StartingHealth;
+	CurrentMana = MaxMana = StartingMana;
+}
+
+void UCombat::Attack(FString& LogMessage, ABaseCharacter* Target)
+{
+	int Damage = 0;
+	int Range = MeleeRange;
+	UEquipment* pEquipment = Owner->GetComponent<UEquipment>();
+	if (pEquipment)
+	{
+		Range += pEquipment->GetRange();
+		Damage += pEquipment->GetWeaponDamage();
+	}
+
+	UCharacterStats* pStat = Owner->GetComponent<UCharacterStats>();
+	check(pStat);
+
+	if (Range == MeleeRange)
+	{
+		Damage += pStat->GetStat(EStats::Strength);
+	}
+	else
+	{
+		Damage += pStat->GetStat(EStats::Dexterity);
+	}
+
+	//FHitResult HitResult;
+	//FVector Start = Owner->GetActorLocation();
+	//FVector End = Start + (Owner->GetActorForwardVector() * Range);
+	//FCollisionObjectQueryParams ObjectParams;
+	//FCollisionQueryParams QueryParams;
+	//QueryParams.AddIgnoredActor(Owner);
+	//Owner->GetWorld()->LineTraceSingleByObjectType(HitResult, Start, End, ObjectParams, QueryParams);
+
+	if (ABaseCharacter* pTarget = Cast<ABaseCharacter>(Target))
+	{
+		UCombat* pCombat = Target->GetComponent<UCombat>();
+		if (pCombat)
+		{
+			pCombat->TakeDamage(Damage);
+			FString Log = Owner->GetCharacterName();
+			Log.Append(" attacked ");
+			Log.Append(Target->GetCharacterName());
+			Log.Append(" for ");
+			Log.Append(FString::FromInt(Damage));
+			Log.Append(" damage.");
+			LogMessage = Log;
+		}
+	}
+	else
+	{
+		//LOG
+	}
+}
+
+void UCombat::CastSpell(ABaseSpell* Spell, ABaseCharacter* Target)
+{
+	Spell->CastSpell(Owner, Target);
 }
 
 void UCombat::TakeDamage(int Amount)
@@ -32,7 +94,11 @@ void UCombat::TakeDamage(int Amount)
 	//get armor
 	UActorComponent* pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
 	UEquipment* pEquipment = Cast<UEquipment>(pComponent); 
-	int Armor = pEquipment->GetTotalArmor();
+	int Armor = 0;
+	if (pEquipment)
+	{
+		pEquipment->GetTotalArmor();
+	}
 
 	int Damage = (Amount - Armor);
 	//make sure that at least 1 damage is always dealt
@@ -51,35 +117,27 @@ void UCombat::Heal(int Amount)
 {
 	UActorComponent* pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
 	UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
-	CurrentHealth += Amount + pStats->GetValue(EStats::Intelligence);
+	CurrentHealth += Amount + pStats->GetStat(EStats::Intelligence);
 	if (CurrentHealth > MaxHealth)
 	{
 		CurrentHealth = MaxHealth;
 	}
 }
 
-void UCombat::Attack(ABaseCharacter* Target)
+void UCombat::RestoreMana(int Amount)
 {
-	UActorComponent* pComponent = nullptr;
-	int Damage = 0;
-	pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
-	check(pComponent);
-	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
-	check(pEquipment);
-	AItem* pLeftHand = pEquipment->GetSlot(EEquipmentSlot::LeftHand);
-	AItem* pRightHand = pEquipment->GetSlot(EEquipmentSlot::RightHand);
-	pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
-	UCharacterStats* pStats = Cast<UCharacterStats>(pComponent);
-	if (pLeftHand)
+	CurrentMana += Amount;
+	if (CurrentMana > MaxMana)
 	{
-		Damage += pLeftHand->GetDamage() + pStats->GetValue(pLeftHand->GetStatType());
+		CurrentMana = MaxMana;
 	}
-	if (pRightHand)
-	{
-		Damage += pRightHand->GetDamage() + pStats->GetValue(pRightHand->GetStatType());
-	} 
+}
 
-	pComponent = Target->GetComponentByClass(UCombat::StaticClass());
-	UCombat* pCombat = Cast<UCombat>(pComponent);
-	pCombat->TakeDamage(Damage);
+void UCombat::ReduceMana(int Amount)
+{
+	CurrentMana -= Amount;
+	if (CurrentMana < 0)
+	{
+		CurrentMana = 0;
+	}
 }
