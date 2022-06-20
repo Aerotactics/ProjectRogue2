@@ -45,9 +45,6 @@ public:
 	bool DecreaseGold(const int32 Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void SetGold(const int32 NewAmount) { Gold = NewAmount; }
-
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	int32 GetGold() const { return Gold; }
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -86,5 +83,4 @@ public:
 private:
 	int32 FillExistingStacks(TSubclassOf<AItem> Class, int32 Amount);
 	int32 FindEmptySlot(bool reverse = false) const;
-	void ShiftEmptySlots();
 };
