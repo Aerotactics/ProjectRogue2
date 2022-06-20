@@ -12,6 +12,7 @@ class ABaseCharacter;
 UENUM(Blueprintable)
 enum class EEquipmentSlot : uint8
 {
+	None,
 	Head,
 	Chest,
 	Legs,
@@ -19,10 +20,9 @@ enum class EEquipmentSlot : uint8
 	Hands,
 	LeftHand,
 	RightHand,
+	
 	Count,
 };
-
-static constexpr unsigned int kEquipmentSlotCount = static_cast<unsigned int>(EEquipmentSlot::Count);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTROGUE2_API UEquipment : public UActorComponent
@@ -34,10 +34,7 @@ private:
 
 protected:
 	UPROPERTY()
-	AItem* EquippedItems[kEquipmentSlotCount];
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
-	TMap<EEquipmentSlot, TSubclassOf<AItem>> StartingItems;
+	AItem* EquippedItems[static_cast<int>(EEquipmentSlot::Count)];
 
 public:	
 	// Sets default values for this component's properties
@@ -48,16 +45,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UFUNCTION(BlueprintCallable, Category = "Equipment")
-	void EquipStartingItems();
-
-	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	UFUNCTION(BlueprintCallable)
 	AItem* GetSlot(EEquipmentSlot Slot) { return EquippedItems[static_cast<int>(Slot)]; }
 
-	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	UFUNCTION(BlueprintCallable)
 	bool TryEquip(EEquipmentSlot Slot, AItem* Item);
 
-	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	UFUNCTION(BlueprintCallable)
 	bool TryUnequip(EEquipmentSlot Slot, bool bIsSwap = false);
 
 	int GetRange() const;
