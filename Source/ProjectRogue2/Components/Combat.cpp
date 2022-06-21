@@ -14,7 +14,9 @@ UCombat::UCombat()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	StartingHealth = 0;
+	StartingMana = 0;
+	MeleeRange = 0;
 	// ...
 }
 
@@ -26,20 +28,22 @@ void UCombat::BeginPlay()
 
 	// ...
 	Owner = Cast<ABaseCharacter>(GetOwner());
+	CurrentHealth = MaxHealth = StartingHealth;
+	CurrentMana = MaxMana = StartingMana;
 }
 
-void UCombat::Attack()
+void UCombat::Attack(FString& LogMessage, ABaseCharacter* Target)
 {
-	UActorComponent* pComponent = nullptr;
-	pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
-	check(pComponent);
-	UEquipment* pEquipment = Cast<UEquipment>(pComponent);
-	check(pEquipment);
-	int Damage = pEquipment->GetWeaponDamage();
-	int Range = pEquipment->GetRange();
-	pComponent = Owner->GetComponentByClass(UCharacterStats::StaticClass());
-	check(pComponent);
-	UCharacterStats* pStat = Cast<UCharacterStats>(pComponent);
+	int Damage = 0;
+	int Range = MeleeRange;
+	UEquipment* pEquipment = Owner->GetComponent<UEquipment>();
+	if (pEquipment)
+	{
+		Range += pEquipment->GetRange();
+		Damage += pEquipment->GetWeaponDamage();
+	}
+
+	UCharacterStats* pStat = Owner->GetComponent<UCharacterStats>();
 	check(pStat);
 
 	if (Range == MeleeRange)
@@ -61,16 +65,26 @@ void UCombat::Attack()
 
 	if (ABaseCharacter* pTarget = Cast<ABaseCharacter>(Target))
 	{
-		pComponent = pTarget->GetComponentByClass(UCombat::StaticClass());
-		UCombat* pCombat = Cast<UCombat>(pComponent);
+		UCombat* pCombat = Target->GetComponent<UCombat>();
 		if (pCombat)
 		{
 			pCombat->TakeDamage(Damage);
+			FString Log = Owner->GetCharacterName();
+			Log.Append(" attacked ");
+			Log.Append(Target->GetCharacterName());
+			Log.Append(" for ");
+			Log.Append(FString::FromInt(Damage));
+			Log.Append(" damage.");
+			LogMessage = Log;
 		}
+	}
+	else
+	{
+		//LOG
 	}
 }
 
-void UCombat::CastSpell(ABaseSpell* Spell)
+void UCombat::CastSpell(ABaseSpell* Spell, ABaseCharacter* Target)
 {
 	Spell->CastSpell(Owner, Target);
 }
@@ -80,7 +94,11 @@ void UCombat::TakeDamage(int Amount)
 	//get armor
 	UActorComponent* pComponent = Owner->GetComponentByClass(UEquipment::StaticClass());
 	UEquipment* pEquipment = Cast<UEquipment>(pComponent); 
-	int Armor = pEquipment->GetTotalArmor();
+	int Armor = 0;
+	if (pEquipment)
+	{
+		pEquipment->GetTotalArmor();
+	}
 
 	int Damage = (Amount - Armor);
 	//make sure that at least 1 damage is always dealt

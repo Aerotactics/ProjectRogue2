@@ -22,6 +22,13 @@ private:
 	TArray<FInventorySlot> Slots;
 	int32 Gold;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 StartingSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 StartingGold;
+
 public:	
 	// Sets default values for this component's properties
 	UInventory();
@@ -36,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool DecreaseGold(const int32 Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetGold(const int32 NewAmount) { Gold = NewAmount; }
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	int32 GetGold() const { return Gold; }
@@ -76,4 +86,5 @@ public:
 private:
 	int32 FillExistingStacks(TSubclassOf<AItem> Class, int32 Amount);
 	int32 FindEmptySlot(bool reverse = false) const;
+	void ShiftEmptySlots();
 };

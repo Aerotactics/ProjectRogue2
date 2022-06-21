@@ -19,7 +19,6 @@ class PROJECTROGUE2_API UCombat : public UActorComponent
 
 private:
 	ABaseCharacter* Owner;
-	ABaseCharacter* Target;
 	TFunction<void()> Callback;
 	int CurrentHealth;
 	int MaxHealth;
@@ -27,7 +26,13 @@ private:
 	int MaxMana;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	UPROPERTY(EditAnywhere)
+	int StartingHealth;
+
+	UPROPERTY(EditAnywhere)
+	int StartingMana;
+
+	UPROPERTY(EditAnywhere)
 	int32 MeleeRange;
 
 public:	
@@ -40,12 +45,11 @@ protected:
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Attack();
+	void Attack(FString& LogMessage, ABaseCharacter* Target);
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void CastSpell(ABaseSpell* Spell);
+	void CastSpell(ABaseSpell* Spell, ABaseCharacter* Target);
 
-	void SetTarget(ABaseCharacter* NewTarget) { Target = NewTarget; }
 	void SetDeathCallback(TFunction<void()> NewCallback) { Callback = NewCallback; }
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
@@ -71,8 +75,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void ReduceMaxMana(int Amount) { MaxMana -= Amount; }
-
-	ABaseCharacter* GetTarget() const { return Target; }
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	int GetCurrentHealth() const { return CurrentHealth; }
